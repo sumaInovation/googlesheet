@@ -7,21 +7,43 @@ const server = require('http').createServer(App);
 // Attach the WebSocket server to the HTTP server
 const wss = new WebSocket.Server({ server });
 const dotenv = require('dotenv');
-const fs = require('fs');
+
 dotenv.config();
 const PORT=process.env.PORT
-const SHEET_ID = process.env.GOOGLE_SHEETS_ID;
-const CREDENTIALS = JSON.parse(fs.readFileSync('secert.json'));
+const SHEET_ID =process.env.GOOGLE_SHEETS_ID;
+
+
+
+const config={
+    
+    "type": process.env.type,
+    "project_id": process.env.project_id,
+    "private_key_id":process.env.private_key_id ,
+    "private_key":process.env.private_key ,
+    "client_email":process.env.client_email,
+    "client_id":process.env.client ,
+    "auth_uri": process.env.auth_uri,
+    "token_uri":process.env.token_uri ,
+    "auth_provider_x509_cert_url":process.env.auth_provider_x509_cert_url ,
+    "client_x509_cert_url":process.env.client_x509_cert_url ,
+    "universe_domain":process.env.universe_domain
+  }
+  
+
+  
+    
+  
+
 var Name,Email,Message
 async function WriteDataOnGoogleSheet() {
 Name="sumanga";
 Email="None";
 Message="Test1";
     const auth = new google.auth.GoogleAuth({
-        credentials: CREDENTIALS,
+        credentials: config,
         scopes: ['https://www.googleapis.com/auth/spreadsheets'],
     });
-
+   
     const sheets = google.sheets({ version: 'v4', auth });
     
      // Write row(s) to spreadsheet
@@ -56,7 +78,7 @@ wss.on('connection', (ws) => {
       client.send(message.toString());
     }});
     WriteDataOnGoogleSheet();
-    
+      
   });
 
   // Event: When the WebSocket client disconnects
@@ -72,4 +94,3 @@ wss.on('connection', (ws) => {
 server.listen(PORT, () => {
   console.log(`HTTP and WebSocket server is running on http://localhost:${PORT}`);
 });
-  
