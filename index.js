@@ -7,13 +7,9 @@ const server = require('http').createServer(App);
 // Attach the WebSocket server to the HTTP server
 const wss = new WebSocket.Server({ server });
 const dotenv = require('dotenv');
-
 dotenv.config();
 const PORT=process.env.PORT
 const SHEET_ID =process.env.GOOGLE_SHEETS_ID;
-
-
-
 const config={
     
     "type": process.env.type,
@@ -29,35 +25,15 @@ const config={
     "universe_domain":process.env.universe_domain
   }
   
-
-  
+  const auth = new google.auth.GoogleAuth({
+    credentials: config,
+    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+});
+   const sheets = google.sheets({ version: 'v4', auth })
     
   
 
-var Name,Email,Message
-async function WriteDataOnGoogleSheet() {
-Name="sumanga";
-Email="None";
-Message="Test1";
-    const auth = new google.auth.GoogleAuth({
-        credentials: config,
-        scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-    });
-   
-    const sheets = google.sheets({ version: 'v4', auth });
-    
-     // Write row(s) to spreadsheet
-    sheets.spreadsheets.values.append({
-    auth,
-    spreadsheetId:SHEET_ID,
-    range: "Sheet1!A:B",
-    valueInputOption: "USER_ENTERED",
-    resource: {
-      values: [[Name, Email,Message]],
-    }})
-}
 
-//accessGoogleSheet();
 
 
 
@@ -77,7 +53,16 @@ wss.on('connection', (ws) => {
     if (client !== ws && client.readyState === WebSocket.OPEN) {
       client.send(message.toString());
     }});
-    WriteDataOnGoogleSheet();
+    if(message.toString()=="write"){
+        WriteDataOnGoogleSheet()
+    }
+    if(message.toString()=="create"){
+        CretaeNewSheet(); 
+    }
+    if(message.toString()=="read"){
+        readSheet('Sheet1!A1:C3')
+    }
+
       
   });
 
@@ -94,3 +79,68 @@ wss.on('connection', (ws) => {
 server.listen(PORT, () => {
   console.log(`HTTP and WebSocket server is running on http://localhost:${PORT}`);
 });
+//********************GOOGLE SHEET API PART */
+//Write data
+var Name,Email,Message
+async function WriteDataOnGoogleSheet() {
+Name="sumanga";
+Email="None";
+Message="Test1";
+ 
+     // Write row(s) to spreadsheet
+    sheets.spreadsheets.values.append({
+    auth,
+    spreadsheetId:SHEET_ID,
+    range: "Sheet2!A:B",
+    valueInputOption: "USER_ENTERED",
+    resource: {
+      values: [[Name, Email,Message]],
+    }})  
+}
+
+
+// Asynchronous function to read data from a Google Sheet.
+async function readSheet(RANGE) {
+
+    try {
+        const response = await sheets.spreadsheets.values.get({
+            spreadsheetId:SHEET_ID, range:RANGE
+        });
+        const rows = response.data.values;  // Extracts the rows from the response.
+        console.log(rows)
+    } catch (error) {
+        console.error('error', error);  // Logs errors.
+    }
+}
+
+
+
+// Cretyae new sheet
+async function CretaeNewSheet() {
+
+const requests={
+    spreadsheetId:SHEET_ID,
+    requestBody: {
+        requests: [
+                  {
+                    addSheet: {
+                                properties: {
+                                    title: 'JANUARY',
+                                            }
+                              }
+                   }
+                 ]
+                }
+             }
+
+try {
+    const client = await auth.getClient();
+    const response = await sheets.spreadsheets.batchUpdate(requests, { auth:client });
+    console.log('New sheet added');
+
+} catch (error) {  
+console.error('Error adding sheet:', error);
+
+}  
+                    
+}
