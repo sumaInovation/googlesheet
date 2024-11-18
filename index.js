@@ -157,7 +157,7 @@ const data = [
 ];
 
 
-const filterByDateRange = (data, startDate, endDate) => {
+const filterByDateRange = (startDate, endDate) => {
   const startTimestamp = new Date(startDate).getTime();
   const endTimestamp = new Date(endDate).getTime();
 
@@ -169,7 +169,7 @@ const filterByDateRange = (data, startDate, endDate) => {
 
 const startDate = '2024-11-15';
 const endDate = '2024-11-19';
-const rangeData = filterByDateRange(data, startDate, endDate);
+const rangeData = filterByDateRange(startDate, endDate);
 console.log('Data in Date Range:', rangeData);
 
    
