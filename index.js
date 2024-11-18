@@ -7,6 +7,7 @@ const server = require('http').createServer(App);
 // Attach the WebSocket server to the HTTP server
 const wss = new WebSocket.Server({ server });
 const dotenv = require('dotenv');
+const date = new Date();
 dotenv.config();
 const CREDENTIALS={
   type:process.env.type,
@@ -43,7 +44,7 @@ Message="Test1";
     range: "Sheet1!A:B",
     valueInputOption: "USER_ENTERED",
     resource: {
-      values: [[Name, Email,Message]],
+      values: [[date.toLocaleDateString(), Email,Message]],
     }})
 }
 
@@ -114,6 +115,8 @@ async function GetData(RANGE) {
     rows.forEach((row) => {
       console.log(row);
     });
+   
+    return rows;
   } else {
     console.log('No data found.');
   }
@@ -138,8 +141,37 @@ async function SerchData(SEARCH_TERM,RANGE) {
 
 
 }
-App.get('/',(req,res)=>{
-res.send("hello world");
+App.get('/',async(req,res)=>{
+const data=await FetchData('Sheet1');
+
+console.log(data)
+res.status(500).json(data)
 
   
 });
+
+const data = [
+  ['2024-11-15', 'Task 1', 'Pending'],
+  ['2024-11-18', 'Task 2', 'Completed'],
+  ['2024-11-20', 'Task 3', 'In Progress'],
+];
+
+
+const filterByDateRange = (data, startDate, endDate) => {
+  const startTimestamp = new Date(startDate).getTime();
+  const endTimestamp = new Date(endDate).getTime();
+
+  return data.filter((row) => {
+    const rowDate = new Date(row[0]);
+    return rowDate.getTime() >= startTimestamp && rowDate.getTime() <= endTimestamp;
+  });
+};
+
+const startDate = '2024-11-15';
+const endDate = '2024-11-19';
+const rangeData = filterByDateRange(data, startDate, endDate);
+console.log('Data in Date Range:', rangeData);
+
+   
+
+
