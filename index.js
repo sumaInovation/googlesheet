@@ -138,3 +138,8 @@ async function SerchData(SEARCH_TERM,RANGE) {
 
 
 }
+App.get('/',(req,res)=>{
+res.send("hello world");
+
+  
+});
