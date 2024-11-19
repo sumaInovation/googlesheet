@@ -3,6 +3,10 @@ const http = require('http');
 const WebSocket = require('ws');
 const express=require('express');
 const App=express()
+// Middleware to parse JSON and URL-encoded data
+App.use(express.json()); // Parse JSON data
+App.use(express.urlencoded({ extended: true })); // Parse URL-encoded data
+
 const server = require('http').createServer(App);
 // Attach the WebSocket server to the HTTP server
 const wss = new WebSocket.Server({ server });
@@ -31,7 +35,11 @@ const auth = new google.auth.GoogleAuth({
   credentials: CREDENTIALS,
   scopes: ['https://www.googleapis.com/auth/spreadsheets'],
 });
-
+const data = [
+  ['2024-11-15', 'Task 1', 'Pending'],
+  ['2024-11-18', 'Task 2', 'Completed'],
+  ['2024-11-20', 'Task 3', 'In Progress'],
+];
 async function WriteDataOnGoogleSheet() {
 Name="Jaami";
 Email="None";
@@ -44,7 +52,8 @@ Message="Test1";
     range: "Sheet1!A:B",
     valueInputOption: "USER_ENTERED",
     resource: {
-      values: [[date.toLocaleDateString(), Email,Message]],
+      //values: [[date.toLocaleDateString(), Email,Message]],
+      values:data
     }})
 }
 
@@ -150,28 +159,16 @@ res.status(500).json(data)
   
 });
 
-const data = [
-  ['2024-11-15', 'Task 1', 'Pending'],
-  ['2024-11-18', 'Task 2', 'Completed'],
-  ['2024-11-20', 'Task 3', 'In Progress'],
-];
+  
 
+  App.post('/serch',async(req,res)=>{
+     const readData=await FetchData('Sheet1');
+     const startTimestamp = new Date(req.body.startDate).getTime();
+     const endTimestamp = new Date(req.body.endDate).getTime();
+     const query=readData.filter(row=>{
+      return (new Date(row[0]).getTime() >= startTimestamp && new Date(row[0]).getTime() <= endTimestamp)
+          
+      }) 
+       res.send(query);
 
-const filterByDateRange = (startDate, endDate) => {
-  const startTimestamp = new Date(startDate).getTime();
-  const endTimestamp = new Date(endDate).getTime();
-
-  return data.filter((row) => {
-    const rowDate = new Date(row[0]);
-    return rowDate.getTime() >= startTimestamp && rowDate.getTime() <= endTimestamp;
-  });
-};
-
-const startDate = '2024-11-15';
-const endDate = '2024-11-19';
-const rangeData = filterByDateRange(startDate, endDate);
-console.log('Data in Date Range:', rangeData);
-
-   
-
-
+  })
