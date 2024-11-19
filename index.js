@@ -1,8 +1,11 @@
 const { google } = require('googleapis');
 const http = require('http');
-const WebSocket = require('ws');
-const express=require('express');
+const WebSocket = require('ws');  
+const express=require('express');  
 const App=express()
+const {CreateNewSheet}=require('./CreateNewSheet')
+const {FetchData}=require('./Fetchdatas')
+const {WriteDataOnGoogleSheet}=require('./Writedata')
 // Middleware to parse JSON and URL-encoded data
 App.use(express.json()); // Parse JSON data
 App.use(express.urlencoded({ extended: true })); // Parse URL-encoded data
@@ -35,29 +38,6 @@ const auth = new google.auth.GoogleAuth({
   credentials: CREDENTIALS,
   scopes: ['https://www.googleapis.com/auth/spreadsheets'],
 });
-const data = [
-  ['2024-11-15', 'Task 1', 'Pending'],
-  ['2024-11-18', 'Task 2', 'Completed'],
-  ['2024-11-20', 'Task 3', 'In Progress'],
-];
-async function WriteDataOnGoogleSheet() {
-Name="Jaami";
-Email="None";
-Message="Test1";
-    // Write row(s) to spreadsheet
-    const sheets = google.sheets({ version: 'v4', auth });
-    sheets.spreadsheets.values.append({
-    auth,
-    spreadsheetId:SHEET_ID,
-    range: "Sheet1!A:B",
-    valueInputOption: "USER_ENTERED",
-    resource: {
-      //values: [[date.toLocaleDateString(), Email,Message]],
-      values:data
-    }})
-}
-
-//accessGoogleSheet();
 
 
 
@@ -90,85 +70,14 @@ wss.on('connection', (ws) => {
   ws.send('Welcome to the WebSocket server!');
 });
 
-// Start the server on port 8080
+
+
+
+  
+
+  
+ 
+  // Start the server on port 8080
 server.listen(PORT, () => {
   console.log(`HTTP and WebSocket server is running on http://localhost:${PORT}`);
 });
-
-
-
-
-async function FetchData(RANGE) {
-  const authClient = await auth.getClient();
-  const sheets = google.sheets({ version: 'v4', auth: authClient });
-
-  try {
-    const res = await sheets.spreadsheets.values.get({
-      spreadsheetId:SHEET_ID,
-      range: RANGE,
-    });
-
-    const rows = res.data.values;
-    return rows
-  } catch (err) {
-    console.error('The API returned an error: ' + err);
-  }
-}
-
-
-// Read Data From Sheet
-async function GetData(RANGE) {
-  const rows=await FetchData(RANGE);
-  if (rows.length) {
-    console.log('Data from the sheet:');
-    rows.forEach((row) => {
-      console.log(row);
-    });
-   
-    return rows;
-  } else {
-    console.log('No data found.');
-  }
-}
-async function SerchData(SEARCH_TERM,RANGE) {
-  const rows=await FetchData(RANGE);
-  if (rows.length) {
-    // Search for the term in the rows
-    const foundRows = rows.filter((row) => row.some((cell) => cell && cell.toLowerCase().includes(SEARCH_TERM.toLowerCase())));
-
-     if (foundRows.length) {
-      console.log('Found matching rows:');
-      foundRows.forEach((row, index) => {
-        console.log(`Row ${index + 1}:`, row);
-      });
-    } else {
-       console.log('No matching data found.');
-    }
-  } else {
-    console.log('No data found.');
-  }
-
-
-}
-App.get('/',async(req,res)=>{
-const data=await FetchData('Sheet1');
-
-console.log(data)
-res.status(500).json(data)
-
-  
-});
-
-  
-
-  App.post('/serch',async(req,res)=>{
-     const readData=await FetchData('Sheet1');
-     const startTimestamp = new Date(req.body.startDate).getTime();
-     const endTimestamp = new Date(req.body.endDate).getTime();
-     const query=readData.filter(row=>{
-      return (new Date(row[0]).getTime() >= startTimestamp && new Date(row[0]).getTime() <= endTimestamp)
-          
-      }) 
-       res.send(query);
-
-  })
