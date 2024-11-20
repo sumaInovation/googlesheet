@@ -31,14 +31,19 @@ wss.on('connection', (ws) => {
     console.log(`Received message: ${message}`);
 
     // Send a response back to the client
-    ws.send(`Server received: ${message}`);
+     ws.send(`Server received: ${message}`);
+     
+     //Message decode
+
     
        // Share message all connected client
    wss.clients.forEach(function each(client) {
     if (client !== ws && client.readyState === WebSocket.OPEN) {
     client.send(message.toString());
     }});
-    WriteDataOnGoogleSheet();
+    
+  
+   // WriteDataOnGoogleSheet("",'Sheet1');
     
   });
 
@@ -54,3 +59,4 @@ wss.on('connection', (ws) => {
 server.listen(PORT, () => {
   console.log(`HTTP and WebSocket server is running on http://localhost:${PORT}`);
 });
+       
