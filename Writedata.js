@@ -19,14 +19,14 @@ const CREDENTIALS={
 }
 
 const SHEET_ID = process.env.GOOGLE_SHEETS_ID;
-var Name,Email,Message
+
 const auth = new google.auth.GoogleAuth({
   credentials: CREDENTIALS,
   scopes: ['https://www.googleapis.com/auth/spreadsheets'],
 });
 
 async function WriteDataOnGoogleSheet(data,RANGE) {
-    
+    console.log(RANGE)
         // Write row(s) to spreadsheet
         const sheets = google.sheets({ version: 'v4', auth });
         sheets.spreadsheets.values.append({

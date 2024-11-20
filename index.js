@@ -14,6 +14,7 @@ const server = require('http').createServer(App);
 // Attach the WebSocket server to the HTTP server
 const wss = new WebSocket.Server({ server });
 const dotenv = require('dotenv');
+const { time } = require('console');
 const date = new Date();
 dotenv.config();
 
@@ -28,8 +29,35 @@ wss.on('connection', (ws) => {
 
   // Event: When a message is received from a WebSocket client
   ws.on('message', (message) => {
-    console.log(`Received message: ${message}`);
-
+    var data;
+    if(message=="START"){
+      data = [
+      
+        ['DATAE', 'START', '-', '-','User Start'],
+        
+      ];
+     
+    }
+    if(message=="STOP"){
+      data = [
+      
+        ['DATAE', '-', 'STOP', '-','User Stop'],
+        
+      ];
+      
+    }
+    if(message=="BREAKE"){
+     
+      data = [
+      
+        ['DATAE', '-', '-', 'BREAKE','Break Machine'],
+        
+      ];
+    } 
+    WriteDataOnGoogleSheet(data,'Sheet1');//Write data on START cell  
+    
+    
+    
     // Send a response back to the client
      ws.send(`Server received: ${message}`);
      
@@ -42,8 +70,8 @@ wss.on('connection', (ws) => {
     client.send(message.toString());
     }});
     
-  
-   // WriteDataOnGoogleSheet("",'Sheet1');
+    
+   //WriteDataOnGoogleSheet(message,'Sheet1');
     
   });
 
