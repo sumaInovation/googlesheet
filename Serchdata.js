@@ -1,4 +1,7 @@
-App.post('/serch',async(req,res)=>{
+const express = require('express');
+const router = express.Router();
+const {FetchData}=require('./Fetchdatas')
+router.post('/',async(req,res)=>{
     const readData=await FetchData('Sheet1');
     const startTimestamp = new Date(req.body.startDate).getTime();
     const endTimestamp = new Date(req.body.endDate).getTime();
@@ -10,3 +13,5 @@ App.post('/serch',async(req,res)=>{
 
  })
 
+// Export the router
+module.exports = router;
