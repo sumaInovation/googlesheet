@@ -25,7 +25,7 @@ const auth = new google.auth.GoogleAuth({
   scopes: ['https://www.googleapis.com/auth/spreadsheets'],
 });
 
-async function WriteDataOnGoogleSheet(data,RANGE) {
+async function WriteDataOnGoogleSheet(requestBody,RANGE) {
     console.log(RANGE)
         // Write row(s) to spreadsheet
         const sheets = google.sheets({ version: 'v4', auth });
@@ -34,10 +34,8 @@ async function WriteDataOnGoogleSheet(data,RANGE) {
         spreadsheetId:SHEET_ID,
         range: RANGE,
         valueInputOption: "USER_ENTERED",
-        resource: {
-          
-          values:data
-        }})
+        requestBody: requestBody,
+      })
     }
     
     module.exports={WriteDataOnGoogleSheet}

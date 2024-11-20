@@ -29,34 +29,28 @@ wss.on('connection', (ws) => {
 
   // Event: When a message is received from a WebSocket client
   ws.on('message', (message) => {
-    var data;
-    if(message=="START"){
-      data = [
+    
+      //console.log(JSON.parse(message).start);
+      const currentDate = new Date();
+
+      // Get the full year, month, and day
+      const year = currentDate.getFullYear();
+      const month = String(currentDate.getMonth() + 1).padStart(2, '0');  // Get month (0-11) and pad with zero
+      const day = String(currentDate.getDate()).padStart(2, '0');  // Pad day with zero if necessary
       
-        ['DATAE', 'START', '-', '-','User Start'],
-        
-      ];
-     
+      // Format the date as YYYY/MM/DD
+      const formattedDate = `${year}/${month}/${day}`;
+       const data=[
+        [formattedDate,JSON.parse(message).start,JSON.parse(message).end]
+       ]
+    const requestBody={
+      values:data
     }
-    if(message=="STOP"){
-      data = [
-      
-        ['DATAE', '-', 'STOP', '-','User Stop'],
-        
-      ];
-      
-    }
-    if(message=="BREAKE"){
-     
-      data = [
-      
-        ['DATAE', '-', '-', 'BREAKE','Break Machine'],
-        
-      ];
-    } 
-    WriteDataOnGoogleSheet(data,'Sheet1');//Write data on START cell  
     
     
+    WriteDataOnGoogleSheet(requestBody,'Sheet1');//Write data on START cell  
+       
+            
     
     // Send a response back to the client
      ws.send(`Server received: ${message}`);
@@ -88,3 +82,15 @@ server.listen(PORT, () => {
   console.log(`HTTP and WebSocket server is running on http://localhost:${PORT}`);
 });
        
+const newData = [["hello"]];
+const requestBody = {
+  values: newData,  // Values to append (as an array of arrays)
+};
+const newdata=[
+  ["hello","sumanga"]
+]
+async function passdata() {
+  WriteDataOnGoogleSheet(requestBody,'Sheet1!A1') 
+}
+ 
+//setInterval(passdata, 5000);                              
