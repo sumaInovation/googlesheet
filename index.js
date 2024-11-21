@@ -29,7 +29,10 @@ wss.on('connection', (ws) => {
 
   // Event: When a message is received from a WebSocket client
   ws.on('message', (message) => {
-    //console.log(JSON.parse(message).start);
+
+    try{
+     const jsonData=JSON.parse(message);
+     //console.log(JSON.parse(message).start);
       const currentDate = new Date();
     // Get the full year, month, and day
       const year = currentDate.getFullYear();
@@ -38,36 +41,33 @@ wss.on('connection', (ws) => {
       // Format the date as YYYY/MM/DD
       const formattedDate = `${year}/${month}/${day}`;
        const data=[
-        [formattedDate,
-        JSON.parse(message).start,
-        JSON.parse(message).end,
-        JSON.parse(message).elaps]
+        [formattedDate,   
+        jsonData.start,
+        jsonData.end,
+        jsonData.elaps]
        ]
     const requestBody={
       values:data
     }
     
-    var SHEET=JSON.parse(message).sheet
+    var SHEET=jsonData.sheet
     WriteDataOnGoogleSheet(requestBody,SHEET);//Write data on START cell  
          
-                   
-    
-    // Send a response back to the client
-     ws.send(`Server received: ${message}`);     
-     
-     //Message decode
-
-    
-       // Share message all connected client
+                     
+      
+    }catch(error){
+     console.log(message.toString());
+           // Share message all connected client
    wss.clients.forEach(function each(client) {
     if (client !== ws && client.readyState === WebSocket.OPEN) {
     client.send(message.toString());
     }});
+
+    }
     
-    
-   //WriteDataOnGoogleSheet(message,'Sheet1');
-    
-  });
+    // Send a response back to the client
+     ws.send(`Server received: ${message}`);     
+});
 
   // Event: When the WebSocket client disconnects
   ws.on('close', () => {
