@@ -18,7 +18,7 @@ const { time } = require('console');
 const date = new Date();
 dotenv.config();
 
-const PORT=process.env.PORT
+const PORT=process.env.PORT || 3000
 
 
 
