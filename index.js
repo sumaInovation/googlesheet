@@ -29,31 +29,31 @@ wss.on('connection', (ws) => {
 
   // Event: When a message is received from a WebSocket client
   ws.on('message', (message) => {
-    
-      //console.log(JSON.parse(message).start);
+    //console.log(JSON.parse(message).start);
       const currentDate = new Date();
-
-      // Get the full year, month, and day
+    // Get the full year, month, and day
       const year = currentDate.getFullYear();
       const month = String(currentDate.getMonth() + 1).padStart(2, '0');  // Get month (0-11) and pad with zero
       const day = String(currentDate.getDate()).padStart(2, '0');  // Pad day with zero if necessary
-      
       // Format the date as YYYY/MM/DD
       const formattedDate = `${year}/${month}/${day}`;
        const data=[
-        [formattedDate,JSON.parse(message).start,JSON.parse(message).end]
+        [formattedDate,
+        JSON.parse(message).start,
+        JSON.parse(message).end,
+        JSON.parse(message).elaps]
        ]
     const requestBody={
       values:data
     }
     
-    
-    WriteDataOnGoogleSheet(requestBody,'Sheet1');//Write data on START cell  
-       
-            
+    var SHEET=JSON.parse(message).sheet
+    WriteDataOnGoogleSheet(requestBody,SHEET);//Write data on START cell  
+         
+                   
     
     // Send a response back to the client
-     ws.send(`Server received: ${message}`);
+     ws.send(`Server received: ${message}`);     
      
      //Message decode
 
