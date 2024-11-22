@@ -43,7 +43,7 @@ wss.on('connection', (ws) => {
       const month = String(currentDate.getMonth() + 1).padStart(2, '0');  // Get month (0-11) and pad with zero
       const day = String(currentDate.getDate()).padStart(2, '0');  // Pad day with zero if necessary
       // Format the date as YYYY/MM/DD
-      const formattedDate = `${year}/${month}/${day}`;
+      const formattedDate = `${year}-${month}-${day}`;
        const data=[
         [formattedDate,   
         jsonData.start,

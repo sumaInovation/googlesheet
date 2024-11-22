@@ -16,7 +16,7 @@ const totalValue = query.reduce((acc, item) => {
     return acc + Number(item[3]);
   }, 0); // Initialize the accumulator with 0
 
-  res.status(200).json({"Length":totalValue.toString()});
+  res.json({"Length":totalValue.toString()});
 
  })
 
