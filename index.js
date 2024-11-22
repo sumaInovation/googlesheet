@@ -30,7 +30,7 @@ wss.on('connection', (ws) => {
   // Event: When a message is received from a WebSocket client
   ws.on('message', (message) => {
 
-    try{
+    try{   
      const jsonData=JSON.parse(message);
      //console.log(JSON.parse(message).start);
       const currentDate = new Date();
