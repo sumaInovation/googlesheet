@@ -24,9 +24,9 @@ const date = new Date();
 dotenv.config();
 
 const PORT=process.env.PORT
+   
 
-
-
+  
 
 // Event: When a client connects to the WebSocket server
 wss.on('connection', (ws) => {
@@ -57,11 +57,21 @@ wss.on('connection', (ws) => {
     
     var SHEET=jsonData.sheet
     WriteDataOnGoogleSheet(requestBody,SHEET);//Write data on START cell  
-         
+     
+    
+    if(SHEET=="Sheet1"){//fetch today breaking time
+
+
+    }else{//fetch today running time
+
+     
+
+    }
+
                      
       
     }catch(error){
-     console.log(message.toString());
+     
            // Share message all connected client
    wss.clients.forEach(function each(client) {
     if (client !== ws && client.readyState === WebSocket.OPEN) {
