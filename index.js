@@ -45,7 +45,7 @@ wss.on('connection', (ws) => {
       // Format the date as YYYY/MM/DD
       const formattedDate = `${year}/${month}/${day}`;
        const data=[
-        [formattedDate,   
+        [formattedDate,     
         jsonData.start,
         jsonData.end,
         jsonData.elaps]
