@@ -1,7 +1,9 @@
 const http = require('http');
 const WebSocket = require('ws');  
-const express=require('express');  
-const App=express()
+const express=require('express'); 
+const cors = require('cors'); 
+const App=express();
+App.options('*', cors()); // Enable preflight request for all routes
 const {CreateNewSheet}=require('./CreateNewSheet')
 const {FetchData}=require('./Fetchdatas')
 const {WriteDataOnGoogleSheet}=require('./Writedata');
