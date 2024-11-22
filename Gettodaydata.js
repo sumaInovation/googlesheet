@@ -19,7 +19,9 @@ try{
         // Convert the string value to a number and add it to the accumulator
         return acc + Number(item[3]);
       }, 0); // Initialize the accumulator with 0
-     return totalValue.toString();
+    
+     return totalValue.toString()
+
 }catch(error){
   return 0;
   console.log("ERROR",error);  
@@ -27,4 +29,7 @@ try{
 
 
 }
+
+
+
 module.exports={Gettodaydata}

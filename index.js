@@ -3,14 +3,15 @@ const WebSocket = require('ws');
 const express=require('express'); 
 const cors = require('cors'); 
 const App=express();
-
-App.use(cors({
-  origin:'*'
-}));
 const {CreateNewSheet}=require('./CreateNewSheet')
 const {FetchData}=require('./Fetchdatas')
 const {WriteDataOnGoogleSheet}=require('./Writedata');
+const{Gettodaydata}=require('./Gettodaydata')
 const Serchdata=require('./Serchdata');
+App.use(cors({
+  origin:'*'
+}));
+
 // Middleware to parse JSON and URL-encoded data
 App.use(express.json()); // Parse JSON data
 App.use(express.urlencoded({ extended: true })); // Parse URL-encoded data
@@ -20,6 +21,7 @@ const server = require('http').createServer(App);
 const wss = new WebSocket.Server({ server });
 const dotenv = require('dotenv');
 const { time } = require('console');
+const { console } = require('inspector');
 const date = new Date();
 dotenv.config();
 
@@ -34,7 +36,7 @@ wss.on('connection', (ws) => {
 
   // Event: When a message is received from a WebSocket client
   ws.on('message', (message) => {
-
+  
     try{   
      const jsonData=JSON.parse(message);
      //console.log(JSON.parse(message).start);
@@ -60,21 +62,43 @@ wss.on('connection', (ws) => {
       
       var SHEET=jsonData.sheet
       WriteDataOnGoogleSheet(requestBody,SHEET);//Write data on START cell 
+      console.log(SHEET);
+      if(jsonData.sheet=="sheet1"){//Mean maching went to stop now stop
+       //so nw read breaking time
+       console.log("kkk");
+       const todaybrakingtime=Gettodaydata('Sheet2');
+       
+       wss.clients.forEach(function each(client) {
+        if (client !== ws && client.readyState === WebSocket.OPEN) {
+        client.send(todaybrakingtime);  
+        }});
+      }else{
+       const todayrunningtime=Gettodaydata('Sheet1');
+       console.log(SHEET);
+       wss.clients.forEach(function each(client) {
+        if (client !== ws && client.readyState === WebSocket.OPEN) {
+        client.send(todayrunningtime);  
+        }});
+
+      }
+
+
+
        }else{
-                // Share message all connected client
-   wss.clients.forEach(function each(client) {
-    if (client !== ws && client.readyState === WebSocket.OPEN) {
-    client.send(message.toString());
-    }});
+    // Share message all connected client
+  //  wss.clients.forEach(function each(client) {
+  //   if (client !== ws && client.readyState === WebSocket.OPEN) {
+  //   client.send(message.toString());  
+  //   }});
        }              
       
     }catch(error){
      
-           // Share message all connected client
-   wss.clients.forEach(function each(client) {
-    if (client !== ws && client.readyState === WebSocket.OPEN) {
-    client.send(message.toString());
-    }});
+  //          // Share message all connected client
+  //  wss.clients.forEach(function each(client) {
+  //   if (client !== ws && client.readyState === WebSocket.OPEN) {
+  //   client.send(message.toString());
+  //   }});
 
     }
     
@@ -91,11 +115,14 @@ wss.on('connection', (ws) => {
   ws.send('Welcome to the WebSocket server!');
 });
 // Start the server on port 8080
-server.listen(PORT, () => {
+server.listen(PORT, () => {   
   console.log(`HTTP and WebSocket server is running on http://localhost:${PORT}`);
 });
-       
+          
+
+// Gettodaydata('Sheet1').then((res)=>{
+//   console.log(res)
+// })   
 
 
 
-  
