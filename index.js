@@ -79,7 +79,7 @@ wss.on('connection', (ws) => {
   jsonobject=JSON.parse(FeedbackMessage); // Share message all connected client
   wss.clients.forEach(function each(client) {
    if (client !== ws && client.readyState === WebSocket.OPEN) {
-   client.send(jsonobject);
+   client.send("hello");
    }});
     
     }catch(error){
