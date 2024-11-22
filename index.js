@@ -11,7 +11,6 @@ const {CreateNewSheet}=require('./CreateNewSheet')
 const {FetchData}=require('./Fetchdatas')
 const {WriteDataOnGoogleSheet}=require('./Writedata');
 const Serchdata=require('./Serchdata');
-const {Gettodaydata}=require('./Gettodaydata')
 // Middleware to parse JSON and URL-encoded data
 App.use(express.json()); // Parse JSON data
 App.use(express.urlencoded({ extended: true })); // Parse URL-encoded data
@@ -25,9 +24,9 @@ const date = new Date();
 dotenv.config();
 
 const PORT=process.env.PORT
-   
 
-  
+
+
 
 // Event: When a client connects to the WebSocket server
 wss.on('connection', (ws) => {
@@ -46,48 +45,28 @@ wss.on('connection', (ws) => {
       const day = String(currentDate.getDate()).padStart(2, '0');  // Pad day with zero if necessary
       // Format the date as YYYY/MM/DD
       const formattedDate = `${year}/${month}/${day}`;
-      var FeedbackMessage="none";
-      var jsonobject=JSON.parse({"Message":"No Data Comming"});
-      if (jsonData.hasOwnProperty('start')){
-        const data=[
-          [formattedDate,     
-          jsonData.start,
-          jsonData.end,
-          jsonData.elaps]
-         ]
-      const requestBody={
-        values:data
-      }
-      var SHEET=jsonData.sheet;
-      
-      WriteDataOnGoogleSheet(requestBody,SHEET);//Write data Googlesheet 
-      if(SHEET=='Sheet1'){//Machine is currently stop
-        //becouse pass lates brekingtime in googleshet to client 
-        const todaybrakingtime=Gettodaydata('Sheet2');
-          FeedbackMessage={"TodayBreakingTime":todaybrakingtime}
-        }else{
-          const todayrunningtime=Gettodaydata('Sheet2');
-          FeedbackMessage={"TodayRunningTime":todayrunningtime}
-        }
-
-   
-        
-  }else{
-    FeedbackMessage=message.toString();//Normally every 5 second comming data
-  }
-
-  jsonobject=JSON.parse(FeedbackMessage); // Share message all connected client
-  wss.clients.forEach(function each(client) {
-   if (client !== ws && client.readyState === WebSocket.OPEN) {
-   client.send("hello");
-   }});
+       const data=[
+        [formattedDate,     
+        jsonData.start,
+        jsonData.end,
+        jsonData.elaps]
+       ]
+    const requestBody={
+      values:data
+    }
     
+    var SHEET=jsonData.sheet
+    WriteDataOnGoogleSheet(requestBody,SHEET);//Write data on START cell  
+         
+                     
+      
     }catch(error){
-      wss.clients.forEach(function each(client) {
-        if (client !== ws && client.readyState === WebSocket.OPEN) {
-        client.send("hello");
-        }});
-  
+     console.log(message.toString());
+           // Share message all connected client
+   wss.clients.forEach(function each(client) {
+    if (client !== ws && client.readyState === WebSocket.OPEN) {
+    client.send(message.toString());
+    }});
 
     }
     
@@ -108,6 +87,6 @@ server.listen(PORT, () => {
   console.log(`HTTP and WebSocket server is running on http://localhost:${PORT}`);
 });
        
-  
+
 
 
