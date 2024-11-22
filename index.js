@@ -3,6 +3,7 @@ const WebSocket = require('ws');
 const express=require('express'); 
 const cors = require('cors'); 
 const App=express();
+
 App.use(cors({
   origin:'*'
 }));
@@ -86,15 +87,6 @@ server.listen(PORT, () => {
   console.log(`HTTP and WebSocket server is running on http://localhost:${PORT}`);
 });
        
-const newData = [["hello"]];
-const requestBody = {
-  values: newData,  // Values to append (as an array of arrays)
-};
-const newdata=[
-  ["hello","sumanga"]
-]
-async function passdata() {
-  WriteDataOnGoogleSheet(requestBody,'Sheet1!A1') 
-}
- 
-//setInterval(passdata, 5000);                              
+
+
+
