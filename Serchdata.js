@@ -9,7 +9,14 @@ router.post('/',async(req,res)=>{
      return (new Date(row[0]).getTime() >= startTimestamp && new Date(row[0]).getTime() <= endTimestamp)
          
      }) 
-      res.send(query);
+      
+     // Step 1: Sum the "Value" fields (which are the last element in each inner array)
+const totalValue = query.reduce((acc, item) => {
+    // Convert the string value to a number and add it to the accumulator
+    return acc + Number(item[3]);
+  }, 0); // Initialize the accumulator with 0
+
+  res.status(200).json({"Length":totalValue.toString()});
 
  })
 
