@@ -12,7 +12,7 @@ App.use(cors({
   origin:'*'
 }));
 
-// Middleware to parse JSON and URL-encoded data
+
 App.use(express.json()); // Parse JSON data
 App.use(express.urlencoded({ extended: true })); // Parse URL-encoded data
 App.use('/serchdata',Serchdata);
@@ -20,8 +20,7 @@ const server = require('http').createServer(App);
 // Attach the WebSocket server to the HTTP server
 const wss = new WebSocket.Server({ server });
 const dotenv = require('dotenv');
-const { time } = require('console');
-const { console } = require('inspector');
+
 const date = new Date();
 dotenv.config();
 
@@ -31,11 +30,11 @@ const PORT=process.env.PORT
 
 
 // Event: When a client connects to the WebSocket server
-wss.on('connection', (ws) => {
+wss.on('connection', async(ws) => {
   console.log('New WebSocket client connected');
 
   // Event: When a message is received from a WebSocket client
-  ws.on('message', (message) => {
+  ws.on('message', async(message) => {
   
     try{   
      const jsonData=JSON.parse(message);
@@ -62,22 +61,28 @@ wss.on('connection', (ws) => {
       
       var SHEET=jsonData.sheet
       WriteDataOnGoogleSheet(requestBody,SHEET);//Write data on START cell 
-      console.log(SHEET);
+      console.log(jsonData.sheet);
       if(jsonData.sheet=="sheet1"){//Mean maching went to stop now stop
        //so nw read breaking time
-       console.log("kkk");
-       const todaybrakingtime=Gettodaydata('Sheet2');
-       
+       const todaybrakingtime=await Gettodaydata('Sheet2')
+      const message={
+        ToTBreake:todaybrakingtime
+       }
+       const jobject=JSON.stringify(message)
        wss.clients.forEach(function each(client) {
         if (client !== ws && client.readyState === WebSocket.OPEN) {
-        client.send(todaybrakingtime);  
+        client.send(jobject);  
         }});
       }else{
-       const todayrunningtime=Gettodaydata('Sheet1');
-       console.log(SHEET);
+        
+       const todayrunningtime=await Gettodaydata('Sheet1');
+       const message={
+        ToTRun:todayrunningtime
+       }
+       const jobject=JSON.stringify(message)
        wss.clients.forEach(function each(client) {
         if (client !== ws && client.readyState === WebSocket.OPEN) {
-        client.send(todayrunningtime);  
+        client.send(jobject);  
         }});
 
       }
@@ -85,11 +90,11 @@ wss.on('connection', (ws) => {
 
 
        }else{
-    // Share message all connected client
-  //  wss.clients.forEach(function each(client) {
-  //   if (client !== ws && client.readyState === WebSocket.OPEN) {
-  //   client.send(message.toString());  
-  //   }});
+    //Share message all connected client
+   wss.clients.forEach(function each(client) {
+    if (client !== ws && client.readyState === WebSocket.OPEN) {
+    client.send(message.toString());  
+    }});
        }              
       
     }catch(error){
@@ -120,9 +125,6 @@ server.listen(PORT, () => {
 });
           
 
-// Gettodaydata('Sheet1').then((res)=>{
-//   console.log(res)
-// })   
 
 
 
