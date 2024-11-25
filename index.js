@@ -1,97 +1,51 @@
-// const {CreateNewSheet}=require('./CreateNewSheet')
-// const {FetchData}=require('./Fetchdatas')
-// const {WriteDataOnGoogleSheet}=require('./Writedata');
-// const{Gettodaydata}=require('./Gettodaydata')
-// const {Serchdata}=require('./Serchdata');
-       
-// var PORT =5000;  
-// var express = require('express');
-// var app = express();
-// var http = require('http');
-// var server = http.createServer(app);//Create HTTP sever by using express
-// const {Server}=require('socket.io');//Intergrate SocketIO
-// //Create new instance
-// const io=new Server(server,{   
-//   cors:{
-//     origin:'*',
-//     methods:["GET",["POST"]]
-//   }
-// })
-   
-// io.on('connection', (socket) => {
-//    console.log('A new client connected ID:',socket.id);
-     
-//    // Listen for 'update_running_time' events from the client
-//     socket.on('update_running_time', (msg) => {
-//     //console.log('update_running_time: ', msg);
-//     WriteDataOnGoogleSheet(msg,"Sheet1");
-//     UpdateToday();
-    
-//   })
-    
-//    // Listen for 'update_stop_time' events from the client
-//    socket.on('update_stop_time', (msg) => {
-//     const {start,end,value}=msg;
-//     console.log('update_stop_time: ',msg );
-//     WriteDataOnGoogleSheet(msg,"Sheet2");
-//     UpdateToday();
-    
-//   })
-//    // Listen for 'current_running_time' events from the client
-//    socket.on('current_running_time', (msg) => {
-//     console.log('current_running_time: ', msg);
-//   })
-//    // Listen for 'current_breaking_time' events from the client
-//    socket.on('current_breaking_time', (msg) => {
-//     console.log('current_breaking_time: ', msg);
-//   })
-//   socket.on('disconnect',(reason)=>{
-//   console.log(`Client ${socket.id} disconnect,Reason:${reason}`);
-//   })
-  
-  
- 
-
-//   });
-
-  
-   
- 
-//     server.listen(PORT, () =>console.log('listening on *:' + PORT));
-
-//     //Updates Front end Total Today run and stop time
-//     async function UpdateToday(params) {
-//       Gettodaydata("Sheet2").then((res)=>{
-//         //Updates Today Breaking time
-        
-//       })
-//       Gettodaydata("Sheet1").then((res)=>{
-//         //Update today runnign time
-        
-//       })
-//     }   
-
-
-
-
-// Import the 'ws' library
+const express = require('express');
+const http = require('http');
 const WebSocket = require('ws');
-
-// Create a WebSocket server and bind it to port 8080
-const wss = new WebSocket.Server({ port: 5000 });
-
-// This will run when a new client connects to the WebSocket server
+const {CreateNewSheet}=require('./CreateNewSheet')
+const {FetchData}=require('./Fetchdatas')
+const {WriteDataOnGoogleSheet}=require('./Writedata');
+const{Gettodaydata}=require('./Gettodaydata')
+const {Serchdata}=require('./Serchdata');
+// Create an Express application
+const app = express();
+// Create an HTTP server using the Express app
+const server = http.createServer(app);
+// Create a WebSocket server and attach it to the HTTP server
+const wss = new WebSocket.Server({ server });
+// Start the HTTP server
+const PORT =5000;
+// WebSocket connection event
 wss.on('connection', (ws) => {
   console.log('New client connected');
-  
-  // Send a message to the client when they connect
+// Send a welcome message to the client when they connect
   ws.send('Welcome to the WebSocket server!');
-  
-  // Set up an event listener for messages from the client
+// Event listener for receiving messages from the client
   ws.on('message', (message) => {
-    console.log(`Received message: ${message}`);
+//console.log(`Received message: ${message}`);
+    const receivedObject = JSON.parse(message);
+    const {current_breaking_time, breake_value, run_value ,
+      current_running, lenght} = receivedObject;
+
+    if (current_breaking_time != undefined) {//update run time
+      
+
+    }
     
-    // Respond to the client with the same message (echo)
+    if (run_value != undefined || breake_value!=undefined) {//update current time
+    WriteDataOnGoogleSheet(receivedObject);
+    console.log("updates google sheet");
+    }
+    if (current_running != undefined) {//update current_breaking
+
+      
+    }
+    if (lenght != undefined) {//update lenght
+
+      
+    }
+    
+    console.log(receivedObject)
+// Respond to the client with the same message (echo)
     ws.send(`You said: ${message}`);
   });
 
@@ -101,4 +55,5 @@ wss.on('connection', (ws) => {
   });
 });
 
-console.log('WebSocket server is running on ws://localhost:8080');
+
+server.listen(PORT, () => console.log(`Server is running on ${PORT}`));
