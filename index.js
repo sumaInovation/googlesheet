@@ -4,7 +4,7 @@ const {WriteDataOnGoogleSheet}=require('./Writedata');
 const{Gettodaydata}=require('./Gettodaydata')
 const {Serchdata}=require('./Serchdata');
        
-var PORT =5000;
+var PORT =process.env.PORT||5000;
 var express = require('express');
 var app = express();
 var http = require('http');
