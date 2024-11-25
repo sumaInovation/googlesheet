@@ -28,6 +28,32 @@ wss.on('connection', (ws) => {
    if (run_value != undefined || breake_value!=undefined) {//update current time
     WriteDataOnGoogleSheet(receivedObject);
     console.log("updates google sheet");
+
+    Gettodaydata("Sheet1").then((result)=>{
+      const data = {
+        run_time:result
+      };
+     // Convert the data to JSON string
+      const jsonData = JSON.stringify(data);
+      wss.clients.forEach((client)=>{
+        if(client.readyState===WebSocket.OPEN){
+          client.send(jsonData);
+        }
+      })
+    })
+    Gettodaydata("Sheet2").then((result)=>{
+      const data = {
+        stop_time:result
+      };
+     // Convert the data to JSON string
+      const jsonData = JSON.stringify(data);
+      wss.clients.forEach((client)=>{
+        if(client.readyState===WebSocket.OPEN){
+          client.send(jsonData);
+        }
+      })
+
+    })
     }
     if (current_running_time != undefined || current_breaking_time!=undefined || lenght!=undefined) {//update current_breaking
         wss.clients.forEach((client)=>{
@@ -39,7 +65,7 @@ wss.on('connection', (ws) => {
     }
     
     
-    console.log(receivedObject)
+  
 // Respond to the client with the same message (echo)
     ws.send(`You said: ${message}`);
   });
@@ -48,7 +74,7 @@ wss.on('connection', (ws) => {
   ws.on('close', () => {
     console.log('Client disconnected');
   });
-});
+});   
 
 
 server.listen(PORT, () => console.log(`Server is running on ${PORT}`));
