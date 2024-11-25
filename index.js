@@ -32,7 +32,7 @@ wss.on('connection', (ws) => {
     if (current_running_time != undefined || current_breaking_time!=undefined || lenght!=undefined) {//update current_breaking
         wss.clients.forEach((client)=>{
           if(client.readyState===WebSocket.OPEN){
-            client.send(current_running_time);
+            client.send(JSON.stringify(receivedObject));
           }
         })
       
