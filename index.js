@@ -24,25 +24,20 @@ wss.on('connection', (ws) => {
 //console.log(`Received message: ${message}`);
     const receivedObject = JSON.parse(message);
     const {current_breaking_time, breake_value, run_value ,
-      current_running, lenght} = receivedObject;
-
-    if (current_breaking_time != undefined) {//update run time
-      
-
-    }
-    
-    if (run_value != undefined || breake_value!=undefined) {//update current time
+      current_running_time, lenght} = receivedObject;
+   if (run_value != undefined || breake_value!=undefined) {//update current time
     WriteDataOnGoogleSheet(receivedObject);
     console.log("updates google sheet");
     }
-    if (current_running != undefined) {//update current_breaking
-
+    if (current_running_time != undefined || current_breaking_time!=undefined || lenght!=undefined) {//update current_breaking
+        wss.clients.forEach((client)=>{
+          if(client.readyState===WebSocket.OPEN){
+            client.send(current_running_time);
+          }
+        })
       
     }
-    if (lenght != undefined) {//update lenght
-
-      
-    }
+    
     
     console.log(receivedObject)
 // Respond to the client with the same message (echo)
