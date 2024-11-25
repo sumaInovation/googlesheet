@@ -38,11 +38,11 @@ io.on('connection', (socket) => {
     
   })
    // Listen for 'current_running_time' events from the client
-   socket.on('current_running_time1', (msg) => {
+   socket.on('current_running_time', (msg) => {
     console.log('current_running_time: ', msg);
   })
    // Listen for 'current_breaking_time' events from the client
-   socket.on('current_breaking_time1', (msg) => {
+   socket.on('current_breaking_time', (msg) => {
     console.log('current_breaking_time: ', msg);
   })
   socket.on('disconnect',(reason)=>{
