@@ -1,130 +1,72 @@
-const http = require('http');
-const WebSocket = require('ws');  
-const express=require('express'); 
-const cors = require('cors'); 
-const App=express();
 const {CreateNewSheet}=require('./CreateNewSheet')
 const {FetchData}=require('./Fetchdatas')
 const {WriteDataOnGoogleSheet}=require('./Writedata');
 const{Gettodaydata}=require('./Gettodaydata')
-const Serchdata=require('./Serchdata');
-App.use(cors({
-  origin:'*'
-}));
-
-
-App.use(express.json()); // Parse JSON data
-App.use(express.urlencoded({ extended: true })); // Parse URL-encoded data
-App.use('/serchdata',Serchdata);
-const server = require('http').createServer(App);
-// Attach the WebSocket server to the HTTP server
-const wss = new WebSocket.Server({ server });
-const dotenv = require('dotenv');
-
-const date = new Date();
-dotenv.config();
-
-const PORT=process.env.PORT
-
-
-
-
-// Event: When a client connects to the WebSocket server
-wss.on('connection', async(ws) => {
-  console.log('New WebSocket client connected');
-
-  // Event: When a message is received from a WebSocket client
-  ws.on('message', async(message) => {
-  
-    try{   
-     const jsonData=JSON.parse(message);
-     //console.log(JSON.parse(message).start);
-      const currentDate = new Date();
-    // Get the full year, month, and day
-      const year = currentDate.getFullYear();
-      const month = String(currentDate.getMonth() + 1).padStart(2, '0');  // Get month (0-11) and pad with zero
-      const day = String(currentDate.getDate()).padStart(2, '0');  // Pad day with zero if necessary
-      // Format the date as YYYY/MM/DD
-      const formattedDate = `${year}/${month}/${day}`;
+const {Serchdata}=require('./Serchdata');
        
-         
-       if('start' in jsonData){
-        const data=[
-          [formattedDate,     
-          jsonData.start,
-          jsonData.end,
-          jsonData.elaps]
-         ]
-      const requestBody={
-        values:data
-      }
-      
-      var SHEET=jsonData.sheet
-      WriteDataOnGoogleSheet(requestBody,SHEET);//Write data on START cell 
-      console.log(jsonData.sheet);
-      if(jsonData.sheet=="sheet1"){//Mean maching went to stop now stop
-       //so nw read breaking time
-       const todaybrakingtime=await Gettodaydata('Sheet2')
-      const message={
-        ToTBreake:todaybrakingtime
-       }
-       const jobject=JSON.stringify(message)
-       wss.clients.forEach(function each(client) {
-        if (client !== ws && client.readyState === WebSocket.OPEN) {
-        client.send(jobject);  
-        }});
-      }else{
-        
-       const todayrunningtime=await Gettodaydata('Sheet1');
-       const message={
-        ToTRun:todayrunningtime
-       }
-       const jobject=JSON.stringify(message)
-       wss.clients.forEach(function each(client) {
-        if (client !== ws && client.readyState === WebSocket.OPEN) {
-        client.send(jobject);  
-        }});
-
-      }
-
-
-
-       }else{
-    //Share message all connected client
-   wss.clients.forEach(function each(client) {
-    if (client !== ws && client.readyState === WebSocket.OPEN) {
-    client.send(message.toString());  
-    }});
-       }              
-      
-    }catch(error){
+var PORT =5000;
+var express = require('express');
+var app = express();
+var http = require('http');
+var server = http.createServer(app);//Create HTTP sever by using express
+const {Server}=require('socket.io');//Intergrate SocketIO
+//Create new instance
+const io=new Server(server,{
+  cors:{
+    origin:'*',
+    methods:["GET",["POST"]]
+  }
+})
+   
+io.on('connection', (socket) => {
+   console.log('A new client connected ID:',socket.id);
      
-  //          // Share message all connected client
-  //  wss.clients.forEach(function each(client) {
-  //   if (client !== ws && client.readyState === WebSocket.OPEN) {
-  //   client.send(message.toString());
-  //   }});
-
-    }
+   // Listen for 'update_running_time' events from the client
+    socket.on('update_running_time', (msg) => {
+    //console.log('update_running_time: ', msg);
+    WriteDataOnGoogleSheet(msg,"Sheet1");
+    UpdateToday();
     
-    // Send a response back to the client
-     ws.send(`Server received: ${message}`);     
-});
+  })
+    
+   // Listen for 'update_stop_time' events from the client
+   socket.on('update_stop_time', (msg) => {
+    const {start,end,value}=msg;
+    console.log('update_stop_time: ',msg );
+    WriteDataOnGoogleSheet(msg,"Sheet2");
+    UpdateToday();
+    
+  })
+   // Listen for 'current_running_time' events from the client
+   socket.on('current_running_time1', (msg) => {
+    console.log('current_running_time: ', msg);
+  })
+   // Listen for 'current_breaking_time' events from the client
+   socket.on('current_breaking_time1', (msg) => {
+    console.log('current_breaking_time: ', msg);
+  })
+  socket.on('disconnect',(reason)=>{
+  console.log(`Client ${socket.id} disconnect,Reason:${reason}`);
+  })
+  
+  
+ 
 
-  // Event: When the WebSocket client disconnects
-  ws.on('close', () => {
-    console.log('WebSocket client disconnected');
   });
 
-  // Send a welcome message to the newly connected client
-  ws.send('Welcome to the WebSocket server!');
-});
-// Start the server on port 8080
-server.listen(PORT, () => {   
-  console.log(`HTTP and WebSocket server is running on http://localhost:${PORT}`);
-});
-          
+  
+   
+ 
+    server.listen(PORT, () =>console.log('listening on *:' + PORT));
 
-
-
-
+    //Updates Front end Total Today run and stop time
+    async function UpdateToday(params) {
+      Gettodaydata("Sheet2").then((res)=>{
+        //Updates Today Breaking time
+        
+      })
+      Gettodaydata("Sheet1").then((res)=>{
+        //Update today runnign time
+        
+      })
+    }

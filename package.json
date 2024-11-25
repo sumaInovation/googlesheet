@@ -2,11 +2,11 @@
   "name": "googlesheet",
   "version": "1.0.0",
   "description": "",
-  "main": "SocketIO.js",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon SocketIO.js",
-    "build": "SocketIO.js"
+    "start": "nodemon index.js",
+    "build": "index.js"
   },
   "keywords": [],
   "author": "",

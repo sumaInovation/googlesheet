@@ -25,7 +25,30 @@ const auth = new google.auth.GoogleAuth({
   scopes: ['https://www.googleapis.com/auth/spreadsheets'],
 });
 
-async function WriteDataOnGoogleSheet(requestBody,RANGE) {
+async function WriteDataOnGoogleSheet(data,RANGE) {
+
+  const currentDate = new Date();
+  // Get the full year, month, and day
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0');  // Get month (0-11) and pad with zero
+    const day = String(currentDate.getDate()).padStart(2, '0');  // Pad day with zero if necessary
+    // Format the date as YYYY/MM/DD
+    const formattedDate = `${year}/${month}/${day}`;
+     const {start,end,value}=await data;
+     
+    const keys=[
+
+      [
+        formattedDate,
+        start,
+        end,
+        value
+      ]
+     ]
+  const requestBody={
+    values:keys
+  }
+
     
         // Write row(s) to spreadsheet
         const sheets = google.sheets({ version: 'v4', auth });

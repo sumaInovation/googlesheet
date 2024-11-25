@@ -17,7 +17,7 @@ const CREDENTIALS={
 
 }
 const SHEET_ID = process.env.GOOGLE_SHEETS_ID;
-var Name,Email,Message
+
 const auth = new google.auth.GoogleAuth({
   credentials: CREDENTIALS,
   scopes: ['https://www.googleapis.com/auth/spreadsheets'],
