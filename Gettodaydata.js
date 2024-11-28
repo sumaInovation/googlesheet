@@ -20,7 +20,7 @@ try{
         return acc + Number(item[3]);
       }, 0); // Initialize the accumulator with 0
     
-     return totalValue.toString()
+     return totalValue;
 
 }catch(error){
   return 0;
