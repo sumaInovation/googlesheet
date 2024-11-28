@@ -15,10 +15,44 @@ const wss = new WebSocket.Server({ server });
 // Start the HTTP server
 const PORT =5000;
 // WebSocket connection event
-wss.on('connection', (ws) => {
+wss.on('connection', async(ws) => {
   console.log('New client connected');
+  try{
+    //1.lates update today run_vale
+    const run_time=await Gettodaydata("Sheet1");
+    console.log(run_time);
+    //2.latest update today breake value
+   const stop_time=await Gettodaydata("Sheet2");
+   //3.This Month Total run value
+    const result=await FetchData("Sheet1");
+      const thisMonthRunTime=result.map(subArray => Number(subArray[3]))  // Extract first element of each sub-array
+      .reduce((acc, current) => acc + current, 0);
+    //4.This monnth Total beak value
+    const result1=await FetchData("Sheet2");
+    const thisMonthBreakeTime=result1.map(subArray => Number(subArray[3]))  // Extract first element of each sub-array
+    .reduce((acc, current) => acc + current, 0);
+ 
+      //sent to API    
+ 
+      const Objectdata={
+        thisMonthBreakeTime,
+        thisMonthRunTime,
+        run_time,
+        stop_time
+      }
+     
+       
+       
+ console.log(Objectdata);
 // Send a welcome message to the client when they connect
-  ws.send('Welcome to the WebSocket server!');
+  ws.send(JSON.stringify(Objectdata));
+
+  }catch(erro){
+   console.log('cannot connect to google');
+   ws.send('Your Data Base Empty');
+  }
+    
+
 // Event listener for receiving messages from the client
   ws.on('message', async(message) => {
 //console.log(`Received message: ${message}`);
@@ -44,7 +78,7 @@ wss.on('connection', (ws) => {
    const result=await FetchData("Sheet1");
      const thisMonthRunTime=result.map(subArray => Number(subArray[3]))  // Extract first element of each sub-array
      .reduce((acc, current) => acc + current, 0);
-   //4.This monnth Total beak value
+   //4.This monnth Total beak value   
    const result1=await FetchData("Sheet1");
    const thisMonthBreakeTime=result1.map(subArray => Number(subArray[3]))  // Extract first element of each sub-array
    .reduce((acc, current) => acc + current, 0);
@@ -65,7 +99,7 @@ wss.on('connection', (ws) => {
       })
       
       
-
+   
     }
 
 
@@ -74,7 +108,7 @@ wss.on('connection', (ws) => {
           if(client.readyState===WebSocket.OPEN){
             client.send(JSON.stringify(receivedObject));
           }
-        })
+        })  
       
     }
     
