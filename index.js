@@ -14,6 +14,7 @@ const http = require('http');
 const WebSocket = require('ws');
 const { Gettodaydata } = require('./Gettodaydata');
 const { FetchData } = require('./Fetchdatas');
+const {WriteDataOnGoogleSheet}=require('./Writedata')
 const PORT = 5000;
 // Create an Express app
 const app = express();
@@ -55,21 +56,26 @@ const {t}=incomming_message;
 
 
         if (run_value != undefined || breake_value != undefined) {
-          console.log(databuffer);
+        
           //Update runtime on google sheet and get today runtime and brokent time and aloso moth value
-          // WriteDataOnGoogleSheet(message);
+          try{
+            await WriteDataOnGoogleSheet(incomming_message);
+          }catch{
+            console.log('Cannot write data on google sheet')
+          }
+          // 
           const todayTotalRun = await Gettodaydata("Sheet1");
           const todatTotalBreake = await Gettodaydata("Sheet2");
           const sum1 = await FetchData("Sheet1");
           thismontTotalRun = sumValues(sum1);
           const sum2 = await FetchData("Sheet2");
           const thismontTotalBreake = sumValues(sum2)
-          console.log(thismontTotalBreake);
-          console.log(thismontTotalRun);
+         
           databuffer = { ...raw,todatTotalBreake,todayTotalRun,thismontTotalBreake,thismontTotalRun };
         
         }
         //Make Data to transmission form
+      
         const processData = JSON.stringify(databuffer);
 
         // Broadcast the message to all other clients except the sender
@@ -120,4 +126,4 @@ function sumValues(data) {
   });
 
   return totalSum;
-}
+} 
