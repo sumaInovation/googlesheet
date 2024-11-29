@@ -26,6 +26,7 @@ const auth = new google.auth.GoogleAuth({
 });
 
 async function WriteDataOnGoogleSheet(data) {
+  console.log('involked');
   var RANGE="Sheet1"
   const currentDate = new Date();
   // Get the full year, month, and day
