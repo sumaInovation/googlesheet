@@ -72,7 +72,7 @@ const {t}=incomming_message;
           const thismontTotalBreake = sumValues(sum2)
          
           databuffer = { ...raw,todatTotalBreake,todayTotalRun,thismontTotalBreake,thismontTotalRun };
-        
+           
         }
         //Make Data to transmission form
       
