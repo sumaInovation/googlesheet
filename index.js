@@ -14,7 +14,7 @@ const http = require('http');
 const WebSocket = require('ws');
 const { Gettodaydata } = require('./Gettodaydata');
 const { FetchData } = require('./Fetchdatas');
-const {WriteDataOnGoogleSheet}=require('./Writedata')
+const { WriteDataOnGoogleSheet } = require('./Writedata')
 const PORT = 5000;
 // Create an Express app
 const app = express();
@@ -28,12 +28,28 @@ const wss = new WebSocket.Server({ server });
 // Keep track of connected clients
 let clients = [];
 // WebSocket connection handler
-wss.on('connection', (ws) => {
+wss.on('connection', async (ws) => {
   console.log('A new client connected,Total no of Clients', wss.clients.size);
   clients.push(ws);
   // Send a welcome message to jus now connected the client
-  ws.send('Welcome to the WebSocket server!');
+  //updates brwoser
 
+  const todayTotalRun = await Gettodaydata("Sheet1");
+  const todatTotalBreake = await Gettodaydata("Sheet2");
+  
+  
+
+// # Create a dictionary with the variables
+const data = {
+    "todayTotalRun": todayTotalRun,
+    "todatTotalBreake":todatTotalBreake
+}
+
+// # Convert the dictionary to a JSON string
+  
+  const jsonString = JSON.stringify(data);
+  ws.send(jsonString);//Send initial value of drama
+  
   // Listen for messages from the client
   ws.on('message', async (message) => {
 
@@ -49,18 +65,18 @@ wss.on('connection', (ws) => {
         current_running_time,
         current_breaking_time
       } = incomming_message;
-const {t}=incomming_message;
+
       try {
         //Decide what to do ?
         databuffer = { ...raw };
 
 
         if (run_value != undefined || breake_value != undefined) {
-        
+
           //Update runtime on google sheet and get today runtime and brokent time and aloso moth value
-          try{
+          try {
             await WriteDataOnGoogleSheet(incomming_message);
-          }catch{
+          } catch {
             console.log('Cannot write data on google sheet')
           }
           // 
@@ -70,13 +86,14 @@ const {t}=incomming_message;
           thismontTotalRun = sumValues(sum1);
           const sum2 = await FetchData("Sheet2");
           const thismontTotalBreake = sumValues(sum2)
-         
-          databuffer = { ...raw,todatTotalBreake,todayTotalRun,thismontTotalBreake,thismontTotalRun };
-           
+
+          databuffer = { ...raw, todatTotalBreake, todayTotalRun, thismontTotalBreake, thismontTotalRun };
+
         }
         //Make Data to transmission form
-      
+
         const processData = JSON.stringify(databuffer);
+        
 
         // Broadcast the message to all other clients except the sender
         wss.clients.forEach((client) => {
