@@ -36,13 +36,20 @@ wss.on('connection', async (ws) => {
 
   const todayTotalRun = await Gettodaydata("Sheet1");
   const todatTotalBreake = await Gettodaydata("Sheet2");
+  const sum1 = await FetchData("Sheet1");
+  const thismontTotalRun = sumValues(sum1);
+  const sum2 = await FetchData("Sheet2");
+  const thismontTotalBreake = sumValues(sum2)
   
   
 
 // # Create a dictionary with the variables
 const data = {
     "todayTotalRun": todayTotalRun,
-    "todatTotalBreake":todatTotalBreake
+    "todatTotalBreake":todatTotalBreake,
+    "thismontTotalRun":thismontTotalRun,
+    "thismontTotalBreake":thismontTotalBreake
+
 }
 
 // # Convert the dictionary to a JSON string
@@ -56,7 +63,6 @@ const data = {
     let databuffer;
     try {
       const incomming_message = JSON.parse(message);
-
       const raw = {
         start,
         end,
@@ -75,7 +81,10 @@ const data = {
 
           //Update runtime on google sheet and get today runtime and brokent time and aloso moth value
           try {
-            await WriteDataOnGoogleSheet(incomming_message);
+            if(run_value>0 || (breake_value>0)){
+              await WriteDataOnGoogleSheet(incomming_message);
+            }
+           
           } catch {
             console.log('Cannot write data on google sheet')
           }
@@ -83,7 +92,7 @@ const data = {
           const todayTotalRun = await Gettodaydata("Sheet1");
           const todatTotalBreake = await Gettodaydata("Sheet2");
           const sum1 = await FetchData("Sheet1");
-          thismontTotalRun = sumValues(sum1);
+          const thismontTotalRun = sumValues(sum1);
           const sum2 = await FetchData("Sheet2");
           const thismontTotalBreake = sumValues(sum2)
 
