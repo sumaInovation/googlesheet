@@ -55,7 +55,7 @@ const data = {
 // # Convert the dictionary to a JSON string
   
   const jsonString = JSON.stringify(data);
-  ws.send(jsonString);//Send initial value of drama
+  ws.send(jsonString);//Send initial data for new client once
   
   // Listen for messages from the client
   ws.on('message', async (message) => {
