@@ -165,7 +165,7 @@ function sumValues(data) {
 
 
 
-app.post('/',async(req,res)=>{
+app.get('/',async(req,res)=>{
   const result=await FetchData("Sheet1");
   res.send(result);
 
