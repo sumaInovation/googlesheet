@@ -12,12 +12,21 @@ current_breaking_time
 const express = require('express');
 const http = require('http');
 const WebSocket = require('ws');
+const cors = require('cors');
 const { Gettodaydata } = require('./Gettodaydata');
 const { FetchData } = require('./Fetchdatas');
 const { WriteDataOnGoogleSheet } = require('./Writedata')
 const PORT = 5000;
 // Create an Express app
 const app = express();
+
+// Enable CORS with credentials
+const corsOptions = {
+  origin: '*', // Allow requests from this domain
+  credentials: true, // Allow sending cookies with the request
+};
+
+app.use(cors(corsOptions));
 
 // Create an HTTP server and attach it to the Express app
 const server = http.createServer(app);
@@ -153,3 +162,11 @@ function sumValues(data) {
 
   return totalSum;
 } 
+
+
+
+app.post('/',async(req,res)=>{
+  const result=await FetchData("Sheet1");
+  res.send(result);
+
+})
