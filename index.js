@@ -15,7 +15,8 @@ const WebSocket = require('ws');
 const cors = require('cors');
 const { Gettodaydata } = require('./Gettodaydata');
 const { FetchData } = require('./Fetchdatas');
-const { WriteDataOnGoogleSheet } = require('./Writedata')
+const { WriteDataOnGoogleSheet } = require('./Writedata');
+const { Filterdata } = require('./Filterdata');
 const PORT = 5000;
 // Create an Express app
 const app = express();
@@ -27,7 +28,8 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-
+// Middleware to parse incoming JSON data
+app.use(express.json()); // This is crucial for parsing JSON in the body of POST requests
 // Create an HTTP server and attach it to the Express app
 const server = http.createServer(app);
 
@@ -166,7 +168,9 @@ function sumValues(data) {
 
 
 app.post('/',async(req,res)=>{
-  const result=await FetchData("Sheet1");
-  res.send(result);
+  const { starttime, endtime } = req.body; // Extract parameters from the request body
+  const result=await Filterdata("Sheet1",starttime,endtime)
+  console.log(result)
+  res.json(result);
    
 })
