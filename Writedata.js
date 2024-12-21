@@ -25,6 +25,11 @@ const auth = new google.auth.GoogleAuth({
   scopes: ['https://www.googleapis.com/auth/spreadsheets'],
 });
 
+
+
+
+
+
 async function WriteDataOnGoogleSheet(data) {
   console.log('involked');
   var RANGE="Sheet1"
@@ -35,33 +40,27 @@ async function WriteDataOnGoogleSheet(data) {
     const day = String(currentDate.getDate()).padStart(2, '0');  // Pad day with zero if necessary
     // Format the date as YYYY/MM/DD
     const formattedDate = `${year}/${month}/${day}`;
-     const {start,end,breake_value,run_value}=await data;
-     var keys=[];
-     if(breake_value!=undefined){
-      RANGE="Sheet2"
-      keys=[
+     const {start,end,reason}=await data;
+    
+    const timeArray1 = start.split(':');
+    const timeArray = end.split(':');
+    const timediference=(parseInt(timeArray[0],10)*3600+parseInt(timeArray[1],10)*60+parseInt(timeArray[2],10))-(parseInt(timeArray1[0],10)*3600+parseInt(timeArray1[1],10)*60+parseInt(timeArray1[2],10))
+  
+    
+      
+   const   keys=[
 
         [
           formattedDate,
           start,
           end,
-          breake_value
+          timediference,
+          reason
         ]
        ]
-     }
+     
 
-     if(run_value!=undefined){
-      RANGE="Sheet1"
-      keys=[
-
-        [
-          formattedDate,
-          start,
-          end,
-          run_value
-        ]
-       ]
-     }
+    
       
   const requestBody={
     values:keys
@@ -81,5 +80,3 @@ async function WriteDataOnGoogleSheet(data) {
     }
     
     module.exports={WriteDataOnGoogleSheet}
-    
-    
