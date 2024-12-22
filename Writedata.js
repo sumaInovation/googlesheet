@@ -45,10 +45,7 @@ async function WriteDataOnGoogleSheet(data) {
     const timeArray1 = start.split(':');
     const timeArray = end.split(':');
     const timediference=(parseInt(timeArray[0],10)*3600+parseInt(timeArray[1],10)*60+parseInt(timeArray[2],10))-(parseInt(timeArray1[0],10)*3600+parseInt(timeArray1[1],10)*60+parseInt(timeArray1[2],10))
-  
-    
-      
-   const   keys=[
+     const   keys=[
 
         [
           formattedDate,

@@ -30,9 +30,7 @@ wss.on('connection', async (ws) => {
   console.log('A new client connected,Total no of Clients', wss.clients.size);
   clients.push(ws);
 
-
-
-  // Listen for messages from the client
+ // Listen for messages from the client
   ws.on('message', async (message) => {
     try {
       const incomming_message = JSON.parse(message);
@@ -72,6 +70,15 @@ wss.on('connection', async (ws) => {
     console.log('Client disconnected');
   });
 });
+
+//Handle Post reques
+app.post('/',async(req,res)=>{
+  const { starttime, endtime } = req.body; // Extract parameters from the request body
+  const result=await Filterdata("Sheet1",starttime,endtime)
+  console.log(result)
+  res.json(result);
+   
+})
 
 // Start the HTTP server on port 3000
 server.listen(PORT, () => {
