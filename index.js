@@ -16,7 +16,7 @@ const corsOptions = {
   credentials: true, // Allow sending cookies with the request
 };
 
-app.use(cors(corsOptions));
+app.use(cors());
 // Middleware to parse incoming JSON data
 app.use(express.json()); // This is crucial for parsing JSON in the body of POST requests
 // Create an HTTP server and attach it to the Express app
