@@ -4,8 +4,8 @@ const http = require('http');
 const WebSocket = require('ws');
 const cors = require('cors');
 const { WriteDataOnGoogleSheet } = require('./Writedata');
-const { Filterdata } = require('./Filterdata');
-const { mkdirSync } = require('fs');
+const { FetchData } = require('./Fetchdatas');
+const { json } = require('body-parser');
 const PORT = 5000;
 // Create an Express app
 const app = express();
@@ -36,14 +36,20 @@ wss.on('connection', async (ws) => {
   ws.on('message', async (message) => {
        try{
         const dataFromClient = JSON.stringify(message.toString());
+        const{reason}=JSON.parse(JSON.parse(dataFromClient));
+        //Updates Googlesheet when Any state change
+        if(reason!=undefined){
+          WriteDataOnGoogleSheet(JSON.parse(JSON.parse(dataFromClient)))
+        }
        
+        
         wss.clients.forEach((client) => {
          // Exclude the client that sent the message (skip the sender)
          if (client !== ws && client.readyState === WebSocket.OPEN) {
            client.send(dataFromClient);
            
          }
-         console.log(message.toString())
+        //  console.log(message.toString())
        })
         
        }catch(e){
@@ -58,13 +64,28 @@ wss.on('connection', async (ws) => {
   });
 });
 
-//Handle Post reques
-app.post('/', async (req, res) => {
-  const { starttime, endtime } = req.body; // Extract parameters from the request body
-  const result = await Filterdata("Sheet1", starttime, endtime)
-  console.log(result)
-  res.json(result);
 
+
+//Updates today for Piechart 
+app.post('/getdata',async(req,res)=>{
+  const{start,end,day}=req.body;
+  const googlesheetdata=await FetchData("Sheet1");
+   
+  if(day!=undefined){
+   res.json(
+    googlesheetdata.map(item=>{
+      if(item[0]==day)return item
+    })
+   )
+  }
+  if(start!=undefined){
+    const startTimestamp = new Date(start).getTime();
+    const endTimestamp = new Date(end ).getTime();
+    res.json(googlesheetdata.map(item=>{
+      if (new Date(item[0]).getTime() >= startTimestamp && new Date(item[0]).getTime() <= endTimestamp)return item
+    }))
+  }
+                                                          
 })
 
 // Start the HTTP server on port 3000
