@@ -12,7 +12,7 @@ const app = express();
 
 // Enable CORS with credentials
 const corsOptions = {
-  origin: 'https://googlesheet-yuetcisb.b4a.run', // Allow requests from this domain
+  origin: '*', // Allow requests from this domain
   credentials: true, // Allow sending cookies with the request
 };
 
