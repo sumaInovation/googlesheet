@@ -12,11 +12,11 @@ const app = express();
 
 // Enable CORS with credentials
 const corsOptions = {
-  origin: '*', // Allow requests from this domain
+  origin: 'https://googlesheet-yuetcisb.b4a.run', // Allow requests from this domain
   credentials: true, // Allow sending cookies with the request
 };
 
-app.use(cors());
+app.use(corsOptions);
 // Middleware to parse incoming JSON data
 app.use(express.json()); // This is crucial for parsing JSON in the body of POST requests
 // Create an HTTP server and attach it to the Express app
