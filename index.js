@@ -4,7 +4,8 @@ const http = require('http');
 const WebSocket = require('ws');
 const cors = require('cors');
 const { WriteDataOnGoogleSheet } = require('./Writedata');
-const {Filterdata} =require('./Filterdata');
+const { Filterdata } = require('./Filterdata');
+const { mkdirSync } = require('fs');
 const PORT = 5000;
 // Create an Express app
 const app = express();
@@ -31,40 +32,25 @@ wss.on('connection', async (ws) => {
   console.log('A new client connected,Total no of Clients', wss.clients.size);
   clients.push(ws);
 
- // Listen for messages from the client
+  // Listen for messages from the client
   ws.on('message', async (message) => {
-    try {
-      const incomming_message = JSON.parse(message);
-      try{
-
-        const{reason}=incomming_message;
-        if(reason!=undefined){
-         await  WriteDataOnGoogleSheet(incomming_message)
-        }
-        
-      }catch{
-       console.log("Cannot Write on google sheet")
-      }
-      
-        //Update runtime on google sheet and get today runtime and brokent time and aloso moth value
-  
-      
-      // Broadcast the message to all other clients except the sender
+       try{
+        const dataFromClient = JSON.stringify(message.toString());
+       
         wss.clients.forEach((client) => {
-        // Exclude the client that sent the message (skip the sender)
-        if (client !== ws && client.readyState === WebSocket.OPEN) {
-          client.send(message);
-
-
-        }
-         
+         // Exclude the client that sent the message (skip the sender)
+         if (client !== ws && client.readyState === WebSocket.OPEN) {
+           client.send(dataFromClient);
+           
+         }
+         console.log(message.toString())
+       })
         
-      })
-
-    } catch (error) {
-      console.log("Error")
-    }
-
+       }catch(e){
+        console.log("Error :",e);
+       }
+    
+   
   });
   // Handle client disconnection
   ws.on('close', () => {
@@ -73,12 +59,12 @@ wss.on('connection', async (ws) => {
 });
 
 //Handle Post reques
-app.post('/',async(req,res)=>{
+app.post('/', async (req, res) => {
   const { starttime, endtime } = req.body; // Extract parameters from the request body
-  const result=await Filterdata("Sheet1",starttime,endtime)
+  const result = await Filterdata("Sheet1", starttime, endtime)
   console.log(result)
   res.json(result);
-   
+
 })
 
 // Start the HTTP server on port 3000
