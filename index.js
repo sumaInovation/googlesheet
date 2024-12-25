@@ -11,7 +11,7 @@ const PORT = 5000;
 const app = express();
 
 const corsOptions = {
-  origin: 'https://your-frontend-domain.com',  // Only allow this domain to make requests
+  origin: 'htpps://googlesheet-yuetcisb.b4a.run',  // Only allow this domain to make requests
   methods: ['GET', 'POST'],                   // Allowed methods
   allowedHeaders: ['Content-Type', 'Authorization'],  // Allowed headers
 };
