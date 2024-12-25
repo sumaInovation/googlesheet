@@ -64,7 +64,13 @@ wss.on('connection', async (ws) => {
   });
 });
 
+app.get('/data',async(req,res)=>{
+     const message=await FetchData("Sheet1");
+     res.status(200);
+     res.json(message);
 
+
+})
 
 
 // Start the HTTP server on port 3000
