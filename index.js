@@ -10,10 +10,10 @@ const PORT = 5000;
 // Create an Express app
 const app = express();
 
-// Enable CORS with credentials
 const corsOptions = {
-  origin: '*', // Allow requests from this domain
-  credentials: true, // Allow sending cookies with the request
+  origin: 'https://your-frontend-domain.com',  // Only allow this domain to make requests
+  methods: ['GET', 'POST'],                   // Allowed methods
+  allowedHeaders: ['Content-Type', 'Authorization'],  // Allowed headers
 };
 
 app.use(cors(corsOptions));
