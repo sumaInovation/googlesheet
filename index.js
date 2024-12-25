@@ -66,27 +66,6 @@ wss.on('connection', async (ws) => {
 
 
 
-//Updates today for Piechart 
-app.post('/getdata',async(req,res)=>{
-  const{start,end,day}=req.body;
-  const googlesheetdata=await FetchData("Sheet1");
-   
-  if(day!=undefined){
-   res.json(
-    googlesheetdata.map(item=>{
-      if(item[0]==day)return item
-    })
-   )
-  }
-  if(start!=undefined){
-    const startTimestamp = new Date(start).getTime();
-    const endTimestamp = new Date(end ).getTime();
-    res.json(googlesheetdata.map(item=>{
-      if (new Date(item[0]).getTime() >= startTimestamp && new Date(item[0]).getTime() <= endTimestamp)return item
-    }))
-  }
-                                                          
-})
 
 // Start the HTTP server on port 3000
 server.listen(PORT, () => {
