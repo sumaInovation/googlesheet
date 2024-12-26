@@ -12,7 +12,7 @@ const app = express();
 
 const corsOptions = {
   origin: '*',  // Only allow this domain to make requests
- 
+
 };
 
 app.use(cors(corsOptions));
@@ -33,29 +33,29 @@ wss.on('connection', async (ws) => {
 
   // Listen for messages from the client
   ws.on('message', async (message) => {
-       try{
-        const dataFromClient = JSON.stringify(message.toString());
-        const{reason}=JSON.parse(JSON.parse(dataFromClient));
-        //Updates Googlesheet when Any state change
-        if(reason!=undefined){
-          WriteDataOnGoogleSheet(JSON.parse(JSON.parse(dataFromClient)))
+    try {
+      const dataFromClient = JSON.stringify(message.toString());
+      const { reason } = JSON.parse(JSON.parse(dataFromClient));
+      //Updates Googlesheet when Any state change
+      if (reason != undefined) {
+        WriteDataOnGoogleSheet(JSON.parse(JSON.parse(dataFromClient)))
+      }
+
+
+      wss.clients.forEach((client) => {
+        // Exclude the client that sent the message (skip the sender)
+        if (client !== ws && client.readyState === WebSocket.OPEN) {
+          client.send(dataFromClient);
+
         }
-       
-        
-        wss.clients.forEach((client) => {
-         // Exclude the client that sent the message (skip the sender)
-         if (client !== ws && client.readyState === WebSocket.OPEN) {
-           client.send(dataFromClient);
-           
-         }
         //  console.log(message.toString())
-       })
-        
-       }catch(e){
-        console.log("Error :",e);
-       }
-    
-   
+      })
+
+    } catch (e) {
+      console.log("Error :", e);
+    }
+
+
   });
   // Handle client disconnection
   ws.on('close', () => {
@@ -63,12 +63,15 @@ wss.on('connection', async (ws) => {
   });
 });
 
-app.get('/data',async(req,res)=>{
-     const message=await FetchData("Sheet1");
-     res.status(200);
-     res.json(message);
+app.get('/data', async (req, res) => {
+  const message = await FetchData("Sheet1");
+  res.status(200);
+  res.json(message);
 
 
+})
+app.get('/',(req,res)=>{
+  res.send("Hello");
 })
 
 
