@@ -76,6 +76,18 @@ app.get('/distributedata',async(req,res)=>{
   }
   
 })
+app.get('/userdata',async(req,res) => {
+  
+try{
+  const data=await FetchData("Sheet1");
+  res.json(data);
+
+}catch(error){
+  console.error(error);
+  res.json(error)
+}
+
+})
 
 
 // Start the HTTP server on port 3000
