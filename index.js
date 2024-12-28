@@ -63,8 +63,15 @@ wss.on('connection', async (ws) => {
   });
 });
 
-app.get('/',(req,res)=>{
-  res.json({"message":"Sumanga"});
+app.get('/distributedata',async(req,res)=>{
+  try{
+     const data=await FetchData("sheet1");
+     res.json(data);
+  }catch(error){
+    console.log(error);
+    res.json("Error Data Ocurs");
+  }
+  
 })
 
 
