@@ -66,7 +66,10 @@ wss.on('connection', async (ws) => {
 app.get('/distributedata',async(req,res)=>{
   try{
      const data=await FetchData("sheet1");
-     res.json(data);
+     const fileterdata=data.filter(item=>{
+      if(item[0]==new Date().toLocaleDateString())return item
+     })
+     res.json(fileterdata);
   }catch(error){
     console.log(error);
     res.json("Error Data Ocurs");
