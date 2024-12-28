@@ -10,12 +10,10 @@ const PORT = 5000;
 // Create an Express app
 const app = express();
 
-const corsOptions = {
-  origin: '*',  // Only allow this domain to make requests
 
-};
-
-app.use(cors(corsOptions));
+app.use(cors({
+  origin:'*'
+}));
 // Middleware to parse incoming JSON data
 app.use(express.json()); // This is crucial for parsing JSON in the body of POST requests
 // Create an HTTP server and attach it to the Express app
@@ -63,13 +61,7 @@ wss.on('connection', async (ws) => {
   });
 });
 
-app.get('/data', async (req, res) => {
-  const message = await FetchData("Sheet1");
-  res.status(200);
-  res.json(message);
 
-
-})
 app.get('/',(req,res)=>{
   res.send("Hello");
 })
