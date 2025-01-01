@@ -100,3 +100,26 @@ server.listen(PORT, () => {
 
 
 
+const getdata=async()=>{
+  try{
+    const Result= await FetchData("Sheet1");
+   
+    
+    const grouped=Result.reduce((acc,item)=>{
+     const key=item[0];
+     if(acc[key]==null)acc[key]=0;
+     if(item[4]=="RUNNING")
+     acc[key]+=parseInt(item[3],10);
+     return acc
+    },{})   
+  
+  
+
+  }catch(error){
+    console.error(error);
+  }
+        
+
+}
+
+getdata();
