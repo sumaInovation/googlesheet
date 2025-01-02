@@ -66,9 +66,12 @@ wss.on('connection', async (ws) => {
 app.get('/distributedata',async(req,res)=>{
   try{
      const data=await FetchData("sheet1");
+     
      const fileterdata=data.filter(item=>{
-      if(item[0]==new Date().toLocaleDateString())return item
+      if(new Date(item[0]).toLocaleDateString()==new Date().toLocaleDateString())return item
+
      })
+    
      res.json(fileterdata);
   }catch(error){
     console.log(error);
@@ -100,26 +103,3 @@ server.listen(PORT, () => {
 
 
 
-const getdata=async()=>{
-  try{
-    const Result= await FetchData("Sheet1");
-   
-    
-    const grouped=Result.reduce((acc,item)=>{
-     const key=item[0];
-     if(acc[key]==null)acc[key]=0;
-     if(item[4]=="RUNNING")
-     acc[key]+=parseInt(item[3],10);
-     return acc
-    },{})   
-  
-  
-
-  }catch(error){
-    console.error(error);
-  }
-        
-
-}
-
-getdata();
