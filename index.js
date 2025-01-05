@@ -10,16 +10,16 @@ const { json } = require('body-parser');
 const User =require('./Routes/User')
 const Post=require('./Routes/Post');
 const Auth=require('./Middleware/Auth')
-const PORT = 5000;
+const PORT = 3001;
 // Create an Express app
 const app = express();
 app.use(cookieParser());
 const corsOptions = {
-  origin: '*',  // Only allow this domain to make requests
-
+  origin: "*", // Replace with your frontend's origin
+  credentials: true, // Allow cookies to be sent in cross-origin requests
 };
 
-app.use(cors(corsOptions));
+app.use(cors(corsOptions)); // Enable CORS with specified options
 // Middleware to parse incoming JSON data
 app.use(express.json()); // This is crucial for parsing JSON in the body of POST requests
 // Create an HTTP server and attach it to the Express app
