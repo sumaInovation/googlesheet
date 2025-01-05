@@ -3,12 +3,15 @@ const express = require('express');
 const http = require('http');
 const WebSocket = require('ws');
 const cors = require('cors');
-const { WriteDataOnGoogleSheet } = require('./Writedata');
-const { FetchData } = require('./Fetchdatas');
+const { WriteDataOnGoogleSheet } = require('./Googlesheet/Writedata');
+const { FetchData } = require('./Googlesheet/Fetchdatas');
 const { json } = require('body-parser');
+const User =require('./Routes/User')
 const PORT = 5000;
 // Create an Express app
 const app = express();
+app.use(express.json());
+app.use('/user',User);
 
 const corsOptions = {
   origin: '*',  // Only allow this domain to make requests
@@ -97,6 +100,7 @@ try{
 server.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });
+
 
 
 
