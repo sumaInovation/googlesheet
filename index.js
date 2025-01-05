@@ -1,5 +1,6 @@
 
 const express = require('express');
+const cookieParser = require("cookie-parser");
 const http = require('http');
 const WebSocket = require('ws');
 const cors = require('cors');
@@ -12,7 +13,7 @@ const Auth=require('./Middleware/Auth')
 const PORT = 5000;
 // Create an Express app
 const app = express();
-
+app.use(cookieParser());
 const corsOptions = {
   origin: '*',  // Only allow this domain to make requests
 
