@@ -12,9 +12,6 @@ const Auth=require('./Middleware/Auth')
 const PORT = 5000;
 // Create an Express app
 const app = express();
-app.use(express.json());
-app.use('/user',User);
-app.use('/user',Auth,Post);
 
 const corsOptions = {
   origin: '*',  // Only allow this domain to make requests
@@ -25,6 +22,8 @@ app.use(cors(corsOptions));
 // Middleware to parse incoming JSON data
 app.use(express.json()); // This is crucial for parsing JSON in the body of POST requests
 // Create an HTTP server and attach it to the Express app
+app.use('/user',User);
+app.use('/user',Auth,Post);
 const server = http.createServer(app);
 
 // Create a WebSocket server attached to the HTTP server
