@@ -16,7 +16,7 @@ const SECRET_KEY = process.env.PRIVATE_SECRET_KEY;
   res.cookie("authToken", token, {
     httpOnly: true, // Prevents access to the cookie via client-side scripts
     secure: process.env.NODE_ENV === "production", // Use secure cookies in production
-    sameSite: "Strict", // Prevent CSRF
+    sameSite: "None", // Prevent CSRF
   });
   console.log("Login success")
   res.status(200).json({ message: "Login successful", token });
