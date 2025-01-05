@@ -14,7 +14,8 @@ const PORT = 5000;
 // Create an Express app
 const app = express();
 app.use(cookieParser());
-
+app.use(express.json());
+app.use(express.urlencoded({ extended: true })); // Opti
 
 app.use(cors({ origin: 'https://pptinovation.vercel.app', credentials: true })); // Allow specific origin and credentials
 app.use(helmet()); // Add common security headers
@@ -32,8 +33,7 @@ const corsOptions = {
          
 app.use(cors(corsOptions)); // Enable CORS with specified options
 // Middleware to parse incoming JSON data
-app.use(express.json()); // This is crucial for parsing JSON in the body of POST requests
-// Create an HTTP server and attach it to the Express app
+
 
 
 const server = http.createServer(app);
