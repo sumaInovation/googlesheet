@@ -13,11 +13,12 @@ const SECRET_KEY = process.env.PRIVATE_SECRET_KEY;
     const user={name:decode.name,profile:decode.picture}
     const token=jwt.sign(user,SECRET_KEY);
     // Store token in a cookie
-  res.cookie("authToken", token, {
-    httpOnly: true, // Prevents access to the cookie via client-side scripts
-    secure: process.env.NODE_ENV === "production", // Use secure cookies in production
-    sameSite: "None", // Prevent CSRF
-  });
+    res.cookie("authToken", token, {
+      httpOnly: true,                // Prevent access to the cookie from JavaScript
+      secure: process.env.NODE_ENV === "production",  // Only send over HTTPS in production
+      sameSite: "None",              // Allow cross-origin requests
+      maxAge: 3600000,               // Cookie expires in 1 hour
+    });
   console.log("Login success")
   res.status(200).json({ message: "Login successful", token });
      
