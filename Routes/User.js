@@ -30,7 +30,7 @@ const SECRET_KEY = process.env.PRIVATE_SECRET_KEY;
           res.send(decoded) 
           console.log(decoded)   
         }catch(error){
-          
+          console.log(error) 
           return res.status(401)
           
         }  
