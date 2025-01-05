@@ -15,10 +15,10 @@ const PORT = 3001;
 const app = express();
 app.use(cookieParser());
 const corsOptions = {
-  origin: "*", // Replace with your frontend's origin
+  origin: "https://pptinovation.vercel.app/", // Replace with your frontend's origin
   credentials: true, // Allow cookies to be sent in cross-origin requests
 };
-
+  
 app.use(cors(corsOptions)); // Enable CORS with specified options
 // Middleware to parse incoming JSON data
 app.use(express.json()); // This is crucial for parsing JSON in the body of POST requests
