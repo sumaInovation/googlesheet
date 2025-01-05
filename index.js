@@ -7,11 +7,14 @@ const { WriteDataOnGoogleSheet } = require('./Googlesheet/Writedata');
 const { FetchData } = require('./Googlesheet/Fetchdatas');
 const { json } = require('body-parser');
 const User =require('./Routes/User')
+const Post=require('./Routes/Post');
+const Auth=require('./Middleware/Auth')
 const PORT = 5000;
 // Create an Express app
 const app = express();
 app.use(express.json());
 app.use('/user',User);
+app.use('/user',Auth,Post);
 
 const corsOptions = {
   origin: '*',  // Only allow this domain to make requests

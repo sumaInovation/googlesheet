@@ -1,12 +1,15 @@
 const express = require('express');
 const jwt =require('jsonwebtoken')
+require('dotenv').config();
 const router = express.Router();
 
 // Define routes
 router.post('/login', (req, res) => {
-    res.send('List of users');
+      const username=req.body.username;
+      const user={name:username}
+      const token=jwt.sign(user,process.env.PRIVATE_SECRET_KEY);
+      res.send({token});
 });
-
 
 
 
