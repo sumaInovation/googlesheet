@@ -14,7 +14,7 @@ const PORT = 5000;
 const app = express();
 app.use(cookieParser());
 const corsOptions = {
-  origin: "*", // Replace with your frontend's origin
+  origin: "hhtp://localhost:3000", // Replace with your frontend's origin
   credentials: true, // Allow cookies to be sent in cross-origin requests
 };
          
