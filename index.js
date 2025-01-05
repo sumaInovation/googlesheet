@@ -8,9 +8,8 @@ const { WriteDataOnGoogleSheet } = require('./Googlesheet/Writedata');
 const { FetchData } = require('./Googlesheet/Fetchdatas');
 const { json } = require('body-parser');
 const User =require('./Routes/User')
-const Post=require('./Routes/Post');
-const Auth=require('./Middleware/Auth')
-const PORT = 3001;
+
+const PORT = 5000;
 // Create an Express app
 const app = express();
 app.use(cookieParser());
@@ -24,7 +23,7 @@ app.use(cors(corsOptions)); // Enable CORS with specified options
 app.use(express.json()); // This is crucial for parsing JSON in the body of POST requests
 // Create an HTTP server and attach it to the Express app
 app.use('/user',User);
-app.use('/user',Auth,Post);
+
 const server = http.createServer(app);
 
 // Create a WebSocket server attached to the HTTP server
