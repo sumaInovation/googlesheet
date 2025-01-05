@@ -26,13 +26,13 @@ app.use((req, res, next) => {
 })
 
 app.use('/user',User);
-const corsOptions = {
-  origin: "*", // Replace with your frontend's origin
-  credentials: true, // Allow cookies to be sent in cross-origin requests
-};
+// const corsOptions = {
+//   origin: "*", // Replace with your frontend's origin
+//   credentials: true, // Allow cookies to be sent in cross-origin requests
+// };
          
-app.use(cors(corsOptions)); // Enable CORS with specified options
-// Middleware to parse incoming JSON data
+// app.use(cors(corsOptions)); // Enable CORS with specified options
+// // Middleware to parse incoming JSON data
 
 
 
