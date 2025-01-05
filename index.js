@@ -13,6 +13,11 @@ const PORT = 5000;
 // Create an Express app
 const app = express();
 app.use(cookieParser());
+const corsOptions1 = {
+  origin: "https://pptinovation.vercel.app", // Replace with your frontend's origin
+  credentials: true, // Allow cookies to be sent in cross-origin requests
+};
+app.use(cors(corsOptions1)); 
 app.use('/user',User);
 const corsOptions = {
   origin: "*", // Replace with your frontend's origin
