@@ -13,12 +13,22 @@ const PORT = 5000;
 // Create an Express app
 const app = express();
 app.use(cookieParser());
+const allowedOrigins = ['http://localhost:3000', 'https://googlesheet-yuetcisb.b4a.run/'];
+
+// CORS configuration
 const corsOptions = {
-  origin: "*", // Replace with your frontend's origin
-  credentials: true, // Allow cookies to be sent in cross-origin requests
+  origin: (origin, callback) => {
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, true); // Allow the origin
+    } else {
+      callback(new Error('Not allowed by CORS')); // Reject the request if origin is not allowed
+    }
+  },
+  credentials: true, // Allow cookies and credentials (if you're using them)
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
 };
-  
-app.use(cors(corsOptions)); // Enable CORS with specified options
+app.use(cors(corsOptions));
+
 // Middleware to parse incoming JSON data
 app.use(express.json()); // This is crucial for parsing JSON in the body of POST requests
 // Create an HTTP server and attach it to the Express app
