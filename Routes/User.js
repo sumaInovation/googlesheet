@@ -16,7 +16,7 @@ const SECRET_KEY = process.env.PRIVATE_SECRET_KEY;
     res.cookie("authToken", token, {
       httpOnly: true,                // Prevent access to the cookie from JavaScript
       secure: process.env.NODE_ENV === "production",  // Only send over HTTPS in production
-      sameSite: "None",              // Allow cross-origin requests
+                // Allow cross-origin requests
       maxAge: 3600000,               // Cookie expires in 1 hour
     });
   console.log("Login success")
