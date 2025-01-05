@@ -43,7 +43,7 @@ const SECRET_KEY = process.env.PRIVATE_SECRET_KEY;
     res.clearCookie("authToken", { 
       httpOnly: true,          // Ensure it can't be accessed by client-side JavaScript
       secure: process.env.NODE_ENV === "production", // Only send over HTTPS in production
-      sameSite: "Strict",      // Prevent CSRF
+     
     });
   
     res.status(200).json({ message: "Logout successful" });
