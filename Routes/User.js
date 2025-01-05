@@ -18,6 +18,7 @@ const SECRET_KEY = process.env.PRIVATE_SECRET_KEY;
     secure: process.env.NODE_ENV === "production", // Use secure cookies in production
     sameSite: "Strict", // Prevent CSRF
   });
+  console.log("Login success")
   res.status(200).json({ message: "Login successful", token });
      
    }) 
