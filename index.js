@@ -18,7 +18,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // Opti
 
 app.use(cors({ origin: 'https://pptinovation.vercel.app', credentials: true })); // Allow specific origin and credentials
-//app.use(helmet()); // Add common security headers
+app.use(helmet()); // Add common security headers
 app.use((req, res, next) => {
   res.setHeader('Cross-Origin-Opener-Policy: noopener-allow-popups');
   //res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp'); // Adjust based on your requirements
