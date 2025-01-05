@@ -14,7 +14,7 @@ const PORT = 5000;
 const app = express();
 app.use(cookieParser());
 const corsOptions = {
-  origin: "http://localhost:3000", // Replace with your frontend's origin
+  origin: "https://googlesheet-yuetcisb.b4a.run/", // Replace with your frontend's origin
   credentials: true, // Allow cookies to be sent in cross-origin requests
 };
          
