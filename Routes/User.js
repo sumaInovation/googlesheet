@@ -7,7 +7,7 @@ const router = express.Router();
 router.post('/login', (req, res) => {
       const username=req.body.username;
       const user={name:username}
-      const token=jwt.sign(user,process.env.PRIVATE_SECRET_KEY);
+      const token=jwt.sign(user,process.env.PRIVATE_SECRET_KEY,{expiresIn:'10s'});
       res.send({token});
 });
 
