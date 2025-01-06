@@ -17,11 +17,9 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // Opti
 
-app.use(cors({ origin: 'https://pptinovation.vercel.app', credentials: true })); // Allow specific origin and credentials
+app.use(cors({ origin: 'http://localhost:5000/user', credentials: true })); // Allow specific origin and credentials
 app.use('/user',User);
-app.use(cors({
-  origin:'*'
-}))
+
   
 const server = http.createServer(app);
 
