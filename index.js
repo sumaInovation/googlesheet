@@ -18,6 +18,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // Opti
 app.use(bodyparser.json());
 
+app.use((req, res, next) => {
+  // Add COOP and COEP headers to the response
+  res.setHeader('Cross-Origin-Opener-Policy', 'same-origin'); // or 'unsafe-none' if you need less strict policy
+  res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp'); // or 'unsafe-none' if you need less strict policy
+
+  next();
+});
+
 // Configure CORS
 app.use(cors({
  // origin: "http://localhost:3000", // Your frontend's origin
