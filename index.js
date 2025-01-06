@@ -18,26 +18,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // Opti
 
 app.use(cors({ origin: 'https://pptinovation.vercel.app', credentials: true })); // Allow specific origin and credentials
-app.use((req,res,next)=>{
-  res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
-  res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
-next();
-
-});
-
-
-
 app.use('/user',User);
-const corsOptions = {
-  origin: "*", // Replace with your frontend's origin
-  credentials: true, // Allow cookies to be sent in cross-origin requests
-};
-         
-app.use(cors(corsOptions)); // Enable CORS with specified options
-// Middleware to parse incoming JSON data
 
-
-
+  
 const server = http.createServer(app);
 
 // Create a WebSocket server attached to the HTTP server
