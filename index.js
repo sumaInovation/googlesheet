@@ -7,7 +7,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const { WriteDataOnGoogleSheet } = require('./Googlesheet/Writedata');
 const { FetchData } = require('./Googlesheet/Fetchdatas');
-const { json } = require('body-parser');
+const bodyparser = require('body-parser');
 const User =require('./Routes/User')
 
 const PORT = 5000;  
@@ -16,8 +16,15 @@ const app = express();
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // Opti
+app.use(bodyparser.json());
 
-app.use(cors({ origin: 'http://localhost:5000/user', credentials: true })); // Allow specific origin and credentials
+// Configure CORS
+app.use(cors({
+  origin: "http://localhost:3000", // Your frontend's origin
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true, // Allow cookies or Authorization headers
+}));
 app.use('/user',User);
 
   
