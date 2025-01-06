@@ -39,12 +39,12 @@ const SECRET_KEY = process.env.PRIVATE_SECRET_KEY;
   
 router.post('/logout',async(req,res)=>{
 res.clearCookie('auth');
+console.log("involked")
 res.json({"message":"Logout successfully"})
 
 
 })
   
 module.exports = router
-
 
 

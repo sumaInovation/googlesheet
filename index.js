@@ -29,7 +29,7 @@ app.use((req, res, next) => {
 // Configure CORS
 app.use(cors({
  // origin: "http://localhost:3000", // Your frontend's origin
-  origin: "https://pptinovation.vercel.app", // Your frontend's origin
+  origin: ["http://localhost:3000","https://pptinovation.vercel.app"], // Your frontend's origin
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true, // Allow cookies or Authorization headers
@@ -115,7 +115,6 @@ try{
 server.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });
-
 
 
 
