@@ -20,7 +20,8 @@ app.use(bodyparser.json());
 
 // Configure CORS
 app.use(cors({
-  origin: "http://localhost:3000", // Your frontend's origin
+ // origin: "http://localhost:3000", // Your frontend's origin
+  origin: "https://pptinovation.vercel.app", // Your frontend's origin
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true, // Allow cookies or Authorization headers
