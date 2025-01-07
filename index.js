@@ -18,27 +18,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // Opti
 app.use(bodyparser.json());
 
-app.use((req, res, next) => {
-  // Add COOP and COEP headers to the response
-  res.setHeader('Cross-Origin-Opener-Policy', 'same-origin'); // or 'unsafe-none' if you need less strict policy
-  res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp'); // or 'unsafe-none' if you need less strict policy
-
-  next();
-});
 
 
-app.use(
-  session({
-    secret: "your_secret",
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      secure: true, // Only send cookies over HTTPS
-      httpOnly: true, // Prevent JavaScript access
-      sameSite: "None", // Allow cross-origin requests
-    },
-  })
-);
+
+
 
 // Configure CORS
 app.use(cors({
@@ -125,22 +108,41 @@ try{
 })
 
 
-app.post("/userlogin", (req, res) => {
-  const user = { id: 123, name: "John" }; // Example user data
-  req.session.user = user; // Store user data in the session
-   console.log(user);
-  res.send("Login successful");
+// Configure express-session
+app.use(
+  session({
+    secret: 'your-secret-key', // A secret key used to sign the session ID cookie
+    resave: false,             // Avoid resaving session data if not modified
+    saveUninitialized: true,   // Save uninitialized sessions
+    cookie: {
+      maxAge: 1000 * 60 * 60,  // Session expiry (1 hour in milliseconds)
+    },
+  })
+);
+
+// Route to set a session value
+app.get('/set-session', (req, res) => {
+  req.session.username = 'JohnDoe';
+  res.json({"message":"session value set"});
 });
 
-app.get("/getuserdata", (req, res) => {
-  if (req.session.user) {
-    console.log(req.session.user)
-
-    res.send(`Welcome, ${req.session.user.name}`);
+// Route to retrieve the session value
+app.get('/get-session', (req, res) => {
+  if (req.session.username) {
+    res.json({"session":req.session.username});
   } else {
-    console.log("Unauthorized");
-    res.status(401).send("Unauthorized");
+    res.send('No session value set.');
   }
+});
+
+// Route to destroy the session
+app.get('/logout', (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      return res.status(500).send('Error destroying session');
+    }
+    res.send('Session destroyed!');
+  });
 });
 
 
