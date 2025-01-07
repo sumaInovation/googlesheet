@@ -128,7 +128,7 @@ const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const app = express();
 app.use(
   cors({
-    origin: "http://localhost:3000", // React frontend URL
+    origin: "https://pptinovation.vercel.app", // React frontend URL
     credentials: true, // To allow cookies and sessions to be sent
   })
 );
@@ -163,9 +163,7 @@ passport.use(
 passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((user, done) => done(null, user));
 
-app.get("/", (req, res) => {
-  res.send("<a href='/auth/google'>Login with Google</a>");
-});
+
 
 app.get(
   "/auth/google",
@@ -178,7 +176,7 @@ app.get(
   (req, res) => {
   //res.redirect("/profile");
  //res.json({"Message":"successful"});
- res.redirect("http://localhost:3000/singup");
+ res.redirect("https://pptinovation.vercel.app/singup");
 }
 );
 
