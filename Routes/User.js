@@ -14,7 +14,8 @@ const SECRET_KEY = process.env.PRIVATE_SECRET_KEY;
 
          res.cookie('auth',decode,{
             httpOnly:true,
-            secure:false
+            secure:true,
+            sameSite:'none'
          })
 
 
