@@ -9,7 +9,8 @@ const { WriteDataOnGoogleSheet } = require('./Googlesheet/Writedata');
 const { FetchData } = require('./Googlesheet/Fetchdatas');
 const bodyparser = require('body-parser');
 const User =require('./Routes/User')
-const session=require('express-session')
+const session =require('express-session')
+
 const PORT = 5000;  
 // Create an Express app
 const app = express();
@@ -18,10 +19,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // Opti
 app.use(bodyparser.json());
 
+app.use((req, res, next) => {
+  // Add COOP and COEP headers to the response
+  res.setHeader('Cross-Origin-Opener-Policy', 'same-origin'); // or 'unsafe-none' if you need less strict policy
+  res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp'); // or 'unsafe-none' if you need less strict policy
 
-
-
-
+  next();
+});
 
 // Configure CORS
 app.use(cors({
@@ -108,57 +112,47 @@ try{
 })
 
 
+// Enable JSON parsing
+app.use(express.json());
 
-
-// CORS configuration
+// CORS Configuration
 app.use(
   cors({
-    origin: "https://pptinovation.vercel.app", // Frontend domain
-    credentials: true, // Allow cookies
+    origin: "https://pptinovation.vercel.app/", // Replace with your React app URL
+    credentials: true, // Allow cookies to be sent
   })
 );
 
-// Trust proxy for HTTPS cookies
-app.set('trust proxy', 1); // Required if using a reverse proxy
-
-// Session configuration
+// Configure Express Session
 app.use(
   session({
-    secret: 'your-secret-key', // Use a secure, random secret in production
+    secret: "your-secret-key", // Replace with a strong secret
     resave: false,
     saveUninitialized: true,
     cookie: {
-      secure:true, // Only secure cookies in production
-      httpOnly: true, // Prevent client-side JavaScript from accessing cookies
-      sameSite: "None", // Allow cross-origin cookies
+      secure: true, // Ensure it's HTTPS
+      httpOnly: true,
+      sameSite: "None", // Required for cross-origin cookies
     },
   })
 );
 
-// Route to set a session value
-app.get('/set-session', (req, res) => {
-  req.session.username = 'JohnDoe';
-  res.json({ message: "Session value set" });
+// Route to Set Session Data
+app.post("/set-session", (req, res) => {
+  const { name, role } = req.body; // Example data
+  req.session.user = { name, role }; // Store data in session
+  res.json({ message: "Session data set successfully!" });
 });
 
-// Route to retrieve the session value
-app.get('/get-session', (req, res) => {
-  if (req.session.username) {
-    res.json({ session: req.session.username });
+// Route to Get Session Data
+app.get("/get-session", (req, res) => {
+  if (req.session.user) {
+    res.json({ user: req.session.user }); // Send session data to frontend
   } else {
-    res.send('No session value set.');
+    res.status(404).json({ message: "No session data found!" });
   }
 });
 
-// Route to destroy the session
-app.get('/logout', (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
-      return res.status(500).send('Error destroying session');
-    }
-    res.send('Session destroyed!');
-  });
-});
 
 
 
