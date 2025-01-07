@@ -39,7 +39,8 @@ router.post("/login", async (req, res) => {
         httpOnly:true,
         secure:true,//when We use HTTPS set as true else false
         sameSite:'none',//when we use HTTPS use this else not use
-        domain:"https://pptinovation.vercel.app"
+        domain:"https://pptinovation.vercel.app",
+        path:'/user/login'
 
     });
       /*
