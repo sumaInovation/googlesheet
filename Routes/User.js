@@ -63,6 +63,7 @@ router.get("/profile", (req, res) => {
   const { authToken } = req.cookies;
      
   if (!authToken) {
+    console.log("no token")
     return res.status(401).json({ error: "Unauthorized" });
   }
 
@@ -72,6 +73,7 @@ router.get("/profile", (req, res) => {
     console.log(userData)
     res.status(200).json(userData); // Send user data to the frontend
   } catch (error) {
+    console.log(error)
     return res.status(401).json({ error: "Invalid token" });
   }
 });
