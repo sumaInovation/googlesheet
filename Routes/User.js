@@ -61,7 +61,7 @@ router.post("/login", async (req, res) => {
 // API to retrieve user info (using the JWT in the cookie)
 router.get("/profile", (req, res) => {
   const { authToken } = req.cookies;
-
+     
   if (!authToken) {
     return res.status(401).json({ error: "Unauthorized" });
   }
@@ -69,6 +69,7 @@ router.get("/profile", (req, res) => {
   try {
     // Decode and verify the JWT
     const userData = jwt.verify(authToken, SECRET_KEY);
+    console.log(userData)
     res.status(200).json(userData); // Send user data to the frontend
   } catch (error) {
     return res.status(401).json({ error: "Invalid token" });
