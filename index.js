@@ -138,9 +138,9 @@ app.use(
 );
 
 // Route to Set Session Data
-app.post("/set-session", (req, res) => {
-  const { name, role } = req.body; // Example data
-  req.session.user = { name, role }; // Store data in session
+app.get("/set-session", (req, res) => {
+  
+  req.session.user ="sumanga"
   res.json({ message: "Session data set successfully!" });
 });
 
