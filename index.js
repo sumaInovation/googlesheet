@@ -108,16 +108,29 @@ try{
 })
 
 
-// Configure express-session
+
+
+// CORS configuration
+app.use(
+  cors({
+    origin: "https://pptinovation.vercel.app", // Frontend domain
+    credentials: true, // Allow cookies
+  })
+);
+
+// Trust proxy for HTTPS cookies
+app.set('trust proxy', 1); // Required if using a reverse proxy
+
+// Session configuration
 app.use(
   session({
-    secret: 'your-secret-key', // A secret key used to sign the session ID cookie
-    resave: false,             // Avoid resaving session data if not modified
-    saveUninitialized: true,   // Save uninitialized sessions
+    secret: 'your-secret-key', // Use a secure, random secret in production
+    resave: false,
+    saveUninitialized: true,
     cookie: {
-      secure: true, // Use true in production with HTTPS
+      secure: process.env.NODE_ENV === "production", // Only secure cookies in production
       httpOnly: true, // Prevent client-side JavaScript from accessing cookies
-      sameSite: "None", // Required for cross-site cookies
+      sameSite: "None", // Allow cross-origin cookies
     },
   })
 );
@@ -125,13 +138,13 @@ app.use(
 // Route to set a session value
 app.get('/set-session', (req, res) => {
   req.session.username = 'JohnDoe';
-  res.json({"message":"session value set"});
+  res.json({ message: "Session value set" });
 });
 
 // Route to retrieve the session value
 app.get('/get-session', (req, res) => {
   if (req.session.username) {
-    res.json({"session":req.session.username});
+    res.json({ session: req.session.username });
   } else {
     res.send('No session value set.');
   }
@@ -146,6 +159,7 @@ app.get('/logout', (req, res) => {
     res.send('Session destroyed!');
   });
 });
+
 
 
 // Start the HTTP server on port 3000
