@@ -14,7 +14,7 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 router.post("/login", async (req, res) => {
   const { id_token } = req.body; // Frontend sends the Google ID token
 
-  if (!id_token) {
+  if (!id_token) {   
     return res.status(400).json({ error: "ID token is required" });
   }
 
@@ -29,7 +29,7 @@ router.post("/login", async (req, res) => {
     const { name, picture, email } = payload;
 
     // Filter the user data to include only what you need
-    const userData = { name, picture, email, role: "user" };
+    const userData = { name, picture, email, role: "Admin" };
 
     // Generate a JWT containing filtered user data
     const token = jwt.sign(userData, SECRET_KEY, { expiresIn: "1h" });
@@ -40,7 +40,17 @@ router.post("/login", async (req, res) => {
         secure:true,//when We use HTTPS set as true else false
         sameSite:'none'//when we use HTTPS use this else not use
     });
-
+      /*
+      {
+  "name": "Sumanga Wimaladasa",
+  "picture": "https://lh3.googleusercontent.com/a/ACg8ocLPujXP3VanApX-9iIaLvd9UvHCjZddxauMsXWoa_2FaA3G8Mg=s96-c",
+  "email": "sumanga0000@gmail.com",
+  "role": "user",
+  "iat": 1736225474,
+  "exp": 1736229074
+}
+       
+       */
     res.status(200).json({ message: "Login successful!" });
   } catch (error) {
     console.error("Error verifying Google token:", error.message);
@@ -65,3 +75,12 @@ router.get("/profile", (req, res) => {
   }
 });
 
+router.post('/logout',async(req,res)=>{
+    res.clearCookie('authToken');
+    console.log("involked")
+    res.json({"message":"Logout successfully"})
+    
+    
+    }) 
+
+module.exports = router
