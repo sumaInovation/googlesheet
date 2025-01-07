@@ -138,7 +138,7 @@ app.get("/getuserdata", (req, res) => {
 
     res.send(`Welcome, ${req.session.user.name}`);
   } else {
-    alert("Unauthorized");
+    console.log("Unauthorized");
     res.status(401).send("Unauthorized");
   }
 });
