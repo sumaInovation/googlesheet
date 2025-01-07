@@ -76,8 +76,13 @@ router.get("/profile", (req, res) => {
 });
 
 router.post('/logout',async(req,res)=>{
-    res.clearCookie('authToken');
-    console.log("involked")
+    res.clearCookie('authToken', {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+        path: '/', // Match the path of the original cookie
+    });
+    
     res.json({"message":"Logout successfully"})
     
     
