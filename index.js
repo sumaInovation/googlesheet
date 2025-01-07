@@ -132,7 +132,7 @@ app.post("/userlogin", (req, res) => {
   res.send("Login successful");
 });
 
-app.get("/userdata", (req, res) => {
+app.get("/getuserdata", (req, res) => {
   if (req.session.user) {
     console.log(req.session.user)
 
