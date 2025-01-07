@@ -187,7 +187,10 @@ app.get("/profile", (req, res) => {
     res.redirect("/");
   }
 });
+app.get('/',(req,res)=>{
+res.redirect("/auth/google")
 
+})
 app.get("/logout", (req, res, next) => {
   req.logout((err) => {
     if (err) {
