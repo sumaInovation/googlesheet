@@ -128,12 +128,14 @@ try{
 app.post("/userlogin", (req, res) => {
   const user = { id: 123, name: "John" }; // Example user data
   req.session.user = user; // Store user data in the session
+  alert("Success session")
   res.send("Login successful");
 });
 
 app.get("/userdata", (req, res) => {
   if (req.session.user) {
     alert(req.session.user.name);
+
     res.send(`Welcome, ${req.session.user.name}`);
   } else {
     alert("Unauthorized");
