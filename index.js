@@ -116,12 +116,12 @@ try{
 app.use(express.json());
 
 // CORS Configuration
-app.use(
-  cors({
-    origin: "https://pptinovation.vercel.app/", // Replace with your React app URL
-    credentials: true, // Allow cookies to be sent
-  })
-);
+// app.use(
+//   cors({
+//     origin: "https://pptinovation.vercel.app", // Replace with your React app URL
+//     credentials: true, // Allow cookies to be sent
+//   })
+// );
 
 // Configure Express Session
 app.use(
