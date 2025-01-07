@@ -128,7 +128,7 @@ app.use(
     resave: false,
     saveUninitialized: true,
     cookie: {
-      secure: process.env.NODE_ENV === "production", // Only secure cookies in production
+      secure:true, // Only secure cookies in production
       httpOnly: true, // Prevent client-side JavaScript from accessing cookies
       sameSite: "None", // Allow cross-origin cookies
     },
