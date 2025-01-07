@@ -1,52 +1,67 @@
-const jwt = require('jsonwebtoken');
-const express = require('express');
-
-require('dotenv').config();
-   
+const express = require("express");
+const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
+const { OAuth2Client } = require("google-auth-library");
 const router = express.Router();
 
-// Secret key for signing JWT
-const SECRET_KEY = process.env.PRIVATE_SECRET_KEY;
-   router.post('/login',(req,res)=>{
-         const{token}=req.body;
 
-         const decode=jwt.sign(token,SECRET_KEY);
-         const user=jwt.decode(decode);
+// Replace with your Google OAuth Client ID
+//const GOOGLE_CLIENT_ID = "your_google_client_id.apps.googleusercontent.com";
+const SECRET_KEY = "your_secret_key"; // Use a secure secret key
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
-         res.cookie('auth',decode,{
-            httpOnly:true,
-            secure:true,//when We use HTTPS set as true else false
-            sameSite:'none'//when we use HTTPS use this else not use
-         })
+// Endpoint to handle login
+router.post("/login", async (req, res) => {
+  const { id_token } = req.body; // Frontend sends the Google ID token
 
+  if (!id_token) {
+    return res.status(400).json({ error: "ID token is required" });
+  }
 
-       res.json({"message":user});      
-   }) 
-   
-   router.get('/profile',async(req,res)=>{
-         const token=req.cookies.auth
-    try {
-        const newtoken = jwt.verify(token, SECRET_KEY);
-        console.log(newtoken)
-        res.json({newtoken})
-    } catch (err) {
-        console.error('Invalid token:', err.message);
-        res.json({"message":"Invalid Token"})
-    }
+  try {
+    // Verify the ID token with Google
+    const ticket = await client.verifyIdToken({
+      idToken: id_token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
 
+    const payload = ticket.getPayload(); // Extract user info from the token
+    const { name, picture, email } = payload;
 
+    // Filter the user data to include only what you need
+    const userData = { name, picture, email, role: "user" };
 
-   
-   })
-  
-router.post('/logout',async(req,res)=>{
-res.clearCookie('auth');
-console.log("involked")
-res.json({"message":"Logout successfully"})
+    // Generate a JWT containing filtered user data
+    const token = jwt.sign(userData, SECRET_KEY, { expiresIn: "1h" });
 
+    // Set the JWT as an HTTP-only cookie
+    res.cookie("authToken", token, {
+        httpOnly:true,
+        secure:true,//when We use HTTPS set as true else false
+        sameSite:'none'//when we use HTTPS use this else not use
+    });
 
-})
-  
-module.exports = router
+    res.status(200).json({ message: "Login successful!" });
+  } catch (error) {
+    console.error("Error verifying Google token:", error.message);
+    res.status(401).json({ error: "Invalid Google token" });
+  }
+});
 
+// API to retrieve user info (using the JWT in the cookie)
+router.get("/profile", (req, res) => {
+  const { authToken } = req.cookies;
+
+  if (!authToken) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  try {
+    // Decode and verify the JWT
+    const userData = jwt.verify(authToken, SECRET_KEY);
+    res.status(200).json(userData); // Send user data to the frontend
+  } catch (error) {
+    return res.status(401).json({ error: "Invalid token" });
+  }
+});
 
