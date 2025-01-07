@@ -199,6 +199,9 @@ app.get("/logout", (req, res, next) => {
   });
 });
 
+app.get('/test',(req,res)=>{
+  res.json({"Message":"Hello Wumanga"});
+})
 app.listen(5000, () => {
   console.log(`Server is running at port 5000`);
 });
