@@ -37,9 +37,10 @@ router.post("/login", async (req, res) => {
     // Set the JWT as an HTTP-only cookie
     res.cookie("authToken", token, {
         httpOnly:true,
-        //secure:true,//when We use HTTPS set as true else false
-        secure:process.env.NODE_EVN==='production',
-        sameSite:'none'//when we use HTTPS use this else not use
+        secure:true,//when We use HTTPS set as true else false
+        sameSite:'none',//when we use HTTPS use this else not use
+        domain:"https://pptinovation.vercel.app"
+
     });
       /*
       {
