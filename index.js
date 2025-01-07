@@ -147,8 +147,10 @@ app.post("/set-session", (req, res) => {
 // Route to Get Session Data
 app.get("/get-session", (req, res) => {
   if (req.session.user) {
+    console.log('hi')
     res.json({ user: req.session.user }); // Send session data to frontend
   } else {
+    console.log('hui')
     res.status(404).json({ message: "No session data found!" });
   }
 });
