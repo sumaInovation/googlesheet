@@ -9,7 +9,7 @@ const { WriteDataOnGoogleSheet } = require('./Googlesheet/Writedata');
 const { FetchData } = require('./Googlesheet/Fetchdatas');
 const bodyparser = require('body-parser');
 const User =require('./Routes/User')
-
+const session=require('express-session')
 const PORT = 5000;  
 // Create an Express app
 const app = express();
@@ -25,6 +25,20 @@ app.use((req, res, next) => {
 
   next();
 });
+
+
+app.use(
+  session({
+    secret: "your_secret",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: true, // Only send cookies over HTTPS
+      httpOnly: true, // Prevent JavaScript access
+      sameSite: "None", // Allow cross-origin requests
+    },
+  })
+);
 
 // Configure CORS
 app.use(cors({
@@ -109,6 +123,23 @@ try{
 }
 
 })
+
+
+app.post("/userlogin", (req, res) => {
+  const user = { id: 123, name: "John" }; // Example user data
+  req.session.user = user; // Store user data in the session
+  res.send("Login successful");
+});
+
+app.get("/userdata", (req, res) => {
+  if (req.session.user) {
+    alert(req.session.user.name);
+    res.send(`Welcome, ${req.session.user.name}`);
+  } else {
+    alert("Unauthorized");
+    res.status(401).send("Unauthorized");
+  }
+});
 
 
 // Start the HTTP server on port 3000
