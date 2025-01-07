@@ -9,17 +9,18 @@ const router = express.Router();
 const SECRET_KEY = process.env.PRIVATE_SECRET_KEY;
    router.post('/login',(req,res)=>{
          const{token}=req.body;
-         const decode=jwt.sign(token,SECRET_KEY);
 
+         const decode=jwt.sign(token,SECRET_KEY);
+         const user=jwt.decode(decode);
 
          res.cookie('auth',decode,{
             httpOnly:true,
-            secure:true,
-            sameSite:'none'
+            secure:true,//when We use HTTPS set as true else false
+            sameSite:'none'//when we use HTTPS use this else not use
          })
 
 
-       res.json({"message":"cookies has been sent!"});      
+       res.json({"message":user});      
    }) 
    
    router.get('/profile',async(req,res)=>{
