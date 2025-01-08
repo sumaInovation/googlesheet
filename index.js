@@ -216,10 +216,10 @@ jwt.verify(token,SECRET_KEY,(err,decode)=>{
   
 if(err){
   console.log(" no veryf")
-   res.status(401).json({ message: 'Invalid or expired token' });
+   return res.status(401).json({ message: 'Invalid or expired token' });
 }
    console.log("veryf")
-   res.json({"user":decode});
+   return res.json({"user":decode});
 
 })
 })
