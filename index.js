@@ -186,6 +186,20 @@ app.get('/deleteCookie', (req, res) => {
 		.status(202)
 		.clearCookie('Name').send("cookies cleared")
 });
+
+app.post('/post',(req,res)=>{
+const {name,email}=req.body
+
+res
+		.status(202)
+		.cookie('Name', name, {
+			sameSite: 'strict',
+			path: '/',
+			expires: new Date(new Date().getTime() + 100 * 1000),
+            httpOnly: true,
+		}).send("cookie being initialised on post request")
+
+})
 app.listen(5000,()=>console.log('sever is running on port:5000'));
 
 
