@@ -211,8 +211,8 @@ res
 })
 
 app.get('/profile',(req,res)=>{
-  const cookievalue=req.cookies('token')(cookievalue)
-res.json(cookievalue)
+  console.log('Cookies:', req.cookies); // All cookies are available here
+  res.json(req.cookies);
 })
 app.listen(5000,()=>console.log('sever is running on port:5000'));
 
