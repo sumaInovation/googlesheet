@@ -214,6 +214,12 @@ res
 app.get('/profile',(req,res)=>{
   console.log('Cookies:', req.cookies.token); // All cookies are available here
   res.json(req.cookies.token);
+  jwt.verify(req.cookies.token,SECRET_KEY,(err,decode)=>{
+    if(err){
+      return res.status(401).json({"message":"connot veryfy"})
+    }
+    return res.json(decode)
+  })
 })
 app.listen(5000,()=>console.log('sever is running on port:5000'));
 
