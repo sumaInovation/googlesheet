@@ -211,17 +211,8 @@ res
 })
 
 app.post('/profile',(req,res)=>{
-const token=req.body;
-jwt.verify(token,SECRET_KEY,(err,decode)=>{
-  
-if(err){
-  console.log(" no veryf")
-   return res.status(401).json({ message: 'Invalid or expired token' });
-}
-   console.log("veryf")
-   return res.json({"user":decode});
-
-})
+  console.log(req.body)
+res.json(req.body)
 })
 app.listen(5000,()=>console.log('sever is running on port:5000'));
 
