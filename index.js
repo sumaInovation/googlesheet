@@ -203,6 +203,7 @@ res
 		.status(202)
 		.cookie('token', token, {
 			sameSite: 'None',
+      secure:true,
 			path: '/',
 			expires: new Date(new Date().getTime() + 100 * 1000),
             httpOnly: true,
