@@ -174,7 +174,7 @@ app.use(cookieParser());
 app.get('/', (req, res) => {
 	res
 		.status(202)
-		.cookie('Name', 'sumanga', {
+		.cookie('oldname', 'sumanga', {
 			sameSite: 'strict',
 			path: '/',
 			expires: new Date(new Date().getTime() + 100 * 1000),
