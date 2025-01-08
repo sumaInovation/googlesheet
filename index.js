@@ -168,6 +168,7 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const app = express();
 const cors = require('cors');
+const SECRET_KEY="sum@345mm"
 app.use(cors({ origin: 'https://pptinovation.vercel.app', credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
@@ -187,18 +188,36 @@ app.get('/deleteCookie', (req, res) => {
 		.clearCookie('Name').send("cookies cleared")
 });
 
-app.post('/post',(req,res)=>{
-const userData=req.body
+app.post('/login',(req,res)=>{
+const {name,email,picture}=req.body
+const payload={
+  Name:name,
+  Email:email,
+  Picture:picture
+}
+ // Sign the token with the payload and secret key, with an expiration time
+ const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '1h' });
 
 res
 		.status(202)
-		.cookie('userData', userData, {
+		.cookie('token', token, {
 			sameSite: 'strict',
 			path: '/',
 			expires: new Date(new Date().getTime() + 100 * 1000),
             httpOnly: true,
-		}).send(userData)
+		}).send("Token has been sent!")
 
+})
+
+app.post('/profile',(req,res)=>{
+const token=req.body;
+jwt.verifytoken(token,SECRET_KEY,(err,decode)=>{
+if(err){
+  return res.status(401).json({ message: 'Invalid or expired token' });
+}
+  return res.json({"user":decode});
+
+})
 })
 app.listen(5000,()=>console.log('sever is running on port:5000'));
 
