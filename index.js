@@ -212,7 +212,7 @@ res
 
 app.post('/profile',(req,res)=>{
 const token=req.body;
-jwt.verifytoken(token,SECRET_KEY,(err,decode)=>{
+jwt.verify(token,SECRET_KEY,(err,decode)=>{
 if(err){
   return res.status(401).json({ message: 'Invalid or expired token' });
 }
