@@ -213,7 +213,7 @@ res
 
 app.get('/profile',(req,res)=>{
    console.log(req.cookies.token);
-   res.json({"message":"hello suma"});
+   res.json({"token":req.cookies.token});
 
   
 })
