@@ -188,11 +188,11 @@ app.get('/deleteCookie', (req, res) => {
 });
 
 app.post('/post',(req,res)=>{
-const {name,email}=req.body
+const userData=req.body
 
 res
 		.status(202)
-		.cookie('Name', name, {
+		.cookie('userData', userData, {
 			sameSite: 'strict',
 			path: '/',
 			expires: new Date(new Date().getTime() + 100 * 1000),
