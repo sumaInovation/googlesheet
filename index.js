@@ -213,10 +213,13 @@ res
 app.post('/profile',(req,res)=>{
 const token=req.body;
 jwt.verify(token,SECRET_KEY,(err,decode)=>{
+  
 if(err){
-  return res.status(401).json({ message: 'Invalid or expired token' });
+  console.log(" no veryf")
+   res.status(401).json({ message: 'Invalid or expired token' });
 }
-  return res.json({"user":decode});
+   console.log("veryf")
+   res.json({"user":decode});
 
 })
 })
