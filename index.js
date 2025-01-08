@@ -212,7 +212,8 @@ res
 })
 
 app.get('/profile',(req,res)=>{
-  
+  console.log('Cookies:', req.cookies.token); // All cookies are available here
+
   jwt.verify(req.cookies.token,SECRET_KEY,(err,decode)=>{
     if(err){
       return res.status(401).json({"message":"connot veryfy"})
