@@ -36,7 +36,7 @@ passport.use(
           email: profile.emails?.[0]?.value || null,
         };
 
-        console.log("Authenticated User:", user);
+       
 
         // Generate a JWT token
         try {
@@ -47,7 +47,7 @@ passport.use(
           console.error("Error generating token:", error);
           return done(null, null);
         }
-       
+        console.log("Authenticated User:", user);
       } catch (error) {
         console.error("Error in Google Strategy callback:", error);
         return done(error, null);
