@@ -77,8 +77,8 @@ app.use((req, res, next) => {
 
 // Middleware to Verify JWT Token
 const authenticateJWT = (req, res, next) => {
-  const token = req.cookies;
-
+  const token = req.cookies.token123;
+  console.log(token)
   if (token) {
     jwt.verify(token, JWT_SECRET, (err, user) => {
       if (err) {
