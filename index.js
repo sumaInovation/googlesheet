@@ -63,14 +63,14 @@ app.get(
       secure: false, // Set to rue in production with HTTPS
     });
 
-    res.redirect("https://pptinovation.vercel.app/singup?name=sumanga"); // Redirect to your React client
+    res.redirect("https://pptinovation.vercel.app/singup"); // Redirect to your React client
   }
 );
 
 // Middleware to Verify JWT Token
 const authenticateJWT = (req, res, next) => {
   const token = req.cookies.token;
-
+     console.log(token);
   if (token) {
     jwt.verify(token, JWT_SECRET, (err, user) => {
       if (err) {
