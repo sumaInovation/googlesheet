@@ -60,7 +60,7 @@ app.get(
     // Send JWT as a cookie to the client
     res.cookie("token", token, {
       httpOnly: true, // Makes the cookie inaccessible to JavaScript
-      secure: false, // Set to true in production with HTTPS
+      secure: false, // Set to rue in production with HTTPS
     });
 
     res.redirect("https://pptinovation.vercel.app/singup?name=sumanga"); // Redirect to your React client
