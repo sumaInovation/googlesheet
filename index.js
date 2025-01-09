@@ -1,75 +1,100 @@
-
-
-
-// Middleware
-
- // Allow your React client to access the API
-
 const express = require("express");
-const app = express();
-const cors=require('cors')
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const jwt = require("jsonwebtoken");
-require("dotenv").config();
-app.use(express.json());
+const cookieParser = require("cookie-parser");
+const cors = require("cors");
+require('dotenv').config()
+const app = express();
+const PORT = 5000;
 
-const JWT_SECRET = process.env.JWT_SECRET || "default-secret-key";
 const url="https://pptinovation.vercel.app"
-app.use(cors({ origin: ["http://localhost:3000",url], credentials: true }));
-// Passport Google Strategy
+// Middleware
+app.use(express.json());
+app.use(cookieParser());
+app.use(cors({ origin: ["http://localhost:3000",url], credentials: true })); // Allow your React client to access the API
+
+// JWT Secret (use a secure key in production)
+const JWT_SECRET = "your_jwt_secret";
+
+// Passport Google Strategy (Replace with your credentials)
 passport.use(
   new GoogleStrategy(
     {
-      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientID:process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "/auth/google/callback",
+      callbackURL: "https://googlesheet-yuetcisb.b4a.run/auth/google/callback",
     },
     (accessToken, refreshToken, profile, done) => {
+      // Here, you'd typically save the user to the database
       const user = {
         id: profile.id,
         name: profile.displayName,
         email: profile.emails[0].value,
       };
 
-      // Generate JWT token
+      // Generate a JWT token
       const token = jwt.sign(user, JWT_SECRET, { expiresIn: "1h" });
 
-      done(null, { user, token });
+      return done(null, { user, token });
     }
   )
 );
 
-// Routes
+// Initialize Passport
+app.use(passport.initialize());
+
+// Route: Start Google Login
 app.get(
   "/auth/google",
-  passport.authenticate("google", { scope: ["profile", "email"], session: false })
+  passport.authenticate("google", { scope: ["profile", "email"], session: false ,prompt: "select_account",})
 );
 
+// Route: Google OAuth Callback
 app.get(
   "/auth/google/callback",
-  passport.authenticate("google", { session: false }),
+  passport.authenticate("google", { session: false, failureRedirect: "/" }),
   (req, res) => {
-    res.json({
-      message: "Authentication successful",
-      user: req.user.user,
-      token: req.user.token,
+    const { token } = req.user;
+
+    // Send JWT as a cookie to the client
+    res.cookie("token", token, {
+      httpOnly: true, // Makes the cookie inaccessible to JavaScript
+      secure: false, // Set to rue in production with HTTPS
     });
+
+    res.redirect("https://pptinovation.vercel.app/singup?name=sumanga"); // Redirect to your React client
   }
 );
 
-// Protected Route
-app.get(
-  "/protected",
-  passport.authenticate("jwt", { session: false }),
-  (req, res) => {
-    res.json({ message: "Protected route accessed", user: req.user });
+// Middleware to Verify JWT Token
+const authenticateJWT = (req, res, next) => {
+  const token = req.cookies.token;
+
+  if (token) {
+    jwt.verify(token, JWT_SECRET, (err, user) => {
+      if (err) {
+        return res.status(403).json({ message: "Invalid or expired token" });
+      }
+      req.user = user;
+      next();
+    });
+  } else {
+    res.status(401).json({ message: "Unauthorized" });
   }
-);
+};
+
+// Example Protected Route
+app.get("/protected", authenticateJWT, (req, res) => {
+  res.json({
+    message: "This is a protected route",
+    user: req.user, // User details decoded from the JWT
+  });
+});
 
 // Start Server
-app.listen(3000, () => {
-  console.log("Server running on http://localhost:3000");
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
 });
 
 
