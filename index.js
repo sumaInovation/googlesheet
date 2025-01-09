@@ -18,7 +18,7 @@ app.use(cors({ origin: ["http://localhost:3000",url], credentials: true })); // 
 const JWT_SECRET = "your_jwt_secret";
 
 
-const jwt = require("jsonwebtoken");
+
 
 passport.use(
   new GoogleStrategy(
