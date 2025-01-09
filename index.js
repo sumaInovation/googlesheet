@@ -39,9 +39,12 @@ passport.use(
         console.log("Authenticated User:", user);
 
         // Generate a JWT token
-        const token = jwt.sign(user, JWT_SECRET, { expiresIn: "1h" });
-        console.log("Token: ",token);
-
+        try {
+          const token = jwt.sign(user, JWT_SECRET, { expiresIn: "1h" });
+          console.log("Token:", token);
+        } catch (error) {
+          console.error("Error generating token:", error);
+        }
         return done(null, { user, token });
       } catch (error) {
         console.error("Error in Google Strategy callback:", error);
