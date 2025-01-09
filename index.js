@@ -241,7 +241,7 @@ app.post('/set-cookie', (req, res) => {
     res
         .cookie(name, value, {
             httpOnly: true,
-            secure: true, // Set to true in production (HTTPS required)
+            secure: false, // Set to true in production (HTTPS required)
             sameSite: 'none', // Adjust based on your cross-site requirements
             maxAge: 24 * 60 * 60 * 1000, // 1 day
         })
