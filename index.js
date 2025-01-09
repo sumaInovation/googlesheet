@@ -1,117 +1,75 @@
+
+
+
+// Middleware
+
+ // Allow your React client to access the API
+
 const express = require("express");
+const app = express();
+const cors=require('cors')
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const jwt = require("jsonwebtoken");
-const cookieParser = require("cookie-parser");
-const cors = require("cors");
-require('dotenv').config()
-const app = express();
-const PORT = 5000;
-
-const url="https://pptinovation.vercel.app"
-// Middleware
+require("dotenv").config();
 app.use(express.json());
-app.use(cookieParser());
-app.use(cors({ origin: ["http://localhost:3000",url], credentials: true })); // Allow your React client to access the API
 
-// JWT Secret (use a secure key in production)
-const JWT_SECRET = process.env.PRIVATE_SECRET_KEY;
-
-
-
-
+const JWT_SECRET = process.env.JWT_SECRET || "default-secret-key";
+const url="https://pptinovation.vercel.app"
+app.use(cors({ origin: ["http://localhost:3000",url], credentials: true }));
+// Passport Google Strategy
 passport.use(
   new GoogleStrategy(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "https://googlesheet-yuetcisb.b4a.run/auth/google/callback",
-      scope: ["profile", "email"],
+      callbackURL: "/auth/google/callback",
     },
-    async (accessToken, refreshToken, profile, done) => {
-      try {
-        const user = {
-          id: profile.id,
-          name: profile.displayName,
-          email: profile.emails[0].value,
-        };
+    (accessToken, refreshToken, profile, done) => {
+      const user = {
+        id: profile.id,
+        name: profile.displayName,
+        email: profile.emails[0].value,
+      };
 
-       
+      // Generate JWT token
+      const token = jwt.sign(user, JWT_SECRET, { expiresIn: "1h" });
 
-        // Generate a JWT token
-        try {
-          const token = jwt.sign(user, JWT_SECRET, { expiresIn: "1h" });
-          console.log("Token:", token);
-          return done(null, { user, token });
-        } catch (error) {
-          console.error("Error generating token:", error);
-          return done(null, null);
-        }
-        console.log("Authenticated User:", user);
-      } catch (error) {
-        console.error("Error in Google Strategy callback:", error);
-        return done(error, null);
-      }
+      done(null, { user, token });
     }
   )
 );
 
-
-// Initialize Passport
-app.use(passport.initialize());
-
-// Route: Start Google Login
+// Routes
 app.get(
   "/auth/google",
-  passport.authenticate("google", { scope: ["profile", "email"], session: false ,prompt: "select_account",})
+  passport.authenticate("google", { scope: ["profile", "email"], session: false })
 );
 
-// Route: Google OAuth Callback
 app.get(
   "/auth/google/callback",
-  passport.authenticate("google", { session: false, failureRedirect: "/" }),
+  passport.authenticate("google", { session: false }),
   (req, res) => {
-    const { token } = req.user;
-
-    // Send JWT as a cookie to the client
-    res.cookie("token", token, {
-      httpOnly: true, // Makes the cookie inaccessible to JavaScript
-      secure: false, // Set to rue in production with HTTPS
+    res.json({
+      message: "Authentication successful",
+      user: req.user.user,
+      token: req.user.token,
     });
-
-    res.redirect("https://pptinovation.vercel.app/singup"); // Redirect to your React client
   }
 );
 
-// Middleware to Verify JWT Token
-const authenticateJWT = (req, res, next) => {
-  
-  const token = req.cookies.token;
-     console.log("tokent is" ,token);
-  if (token) {
-    jwt.verify(token, JWT_SECRET, (err, user) => {
-      if (err) {
-        return res.status(403).json({ message: "Invalid or expired token" });
-      }
-      req.user = user;
-      next();
-    });
-  } else {
-    res.status(401).json({ message: "Unauthorized" });
+// Protected Route
+app.get(
+  "/protected",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    res.json({ message: "Protected route accessed", user: req.user });
   }
-};
-
-// Example Protected Route
-app.get("/protected", authenticateJWT, (req, res) => {
-  res.json({
-    message: "This is a protected route",
-    user: req.user, // User details decoded from the JWT
-  });
-});
+);
 
 // Start Server
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+app.listen(3000, () => {
+  console.log("Server running on http://localhost:3000");
 });
 
 
