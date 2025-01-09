@@ -33,7 +33,7 @@ passport.use(
         const user = {
           id: profile.id,
           name: profile.displayName,
-          email: profile.emails?.[0]?.value || null,
+          email: profile.emails[0].value,
         };
 
        
