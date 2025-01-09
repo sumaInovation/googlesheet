@@ -398,6 +398,7 @@ app.get("/set-cookie", (req, res) => {
     httpOnly: true,
     secure: true,//process.env.NODE_ENV === "production",
     sameSite:'none',// process.env.NODE_ENV === "production" ? "None" : "Lax",
+    path:'/',
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   });
   
