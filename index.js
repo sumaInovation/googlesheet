@@ -383,26 +383,33 @@
 // // app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
 
 
-const express = require("express");
+const express = require('express');
 const app = express();
-const cors = require("cors");
 
-app.use(
-  cors({
-    origin: "https://pptinovation.vercel.app", // Allow frontend origin
-    credentials: true,                 // Allow cookies to be sent
-  })
-);
-app.get("/set-cookie", (req, res) => {
-  res.cookie("preferences", "dark_mode", {
-    httpOnly: true,
-    secure: true,//process.env.NODE_ENV === "production",
-    sameSite:'none',// process.env.NODE_ENV === "production" ? "None" : "Lax",
-    path:'/',
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+app.get('/', (req, res) => {
+  // "name" and "value"
+  res.cookie('sessionId', '12345678', {
+    // "expires" - The cookie expires in 24 hours
+    expires: new Date(Date.now() + 86400000), 
+    // "path" - The cookie is accessible for APIs under the '/api' route
+    path: '/', 
+    // "domain" - The cookie belongs to the 'example.com' domain
+    domain: 'pptinovation.vercel.app', 
+    // "secure" - The cookie will be sent over HTTPS only
+    secure: true, 
+    // "HttpOnly" - The cookie cannot be accessed by client-side scripts
+    httpOnly: true
   });
-  
-  res.json({"message":"hello"});
+
+  // We can also use "maxAge" to specify expiration time in milliseconds
+  res.cookie('preferences', 'dark_theme', {
+    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+    httpOnly: true // For security, also set "httpOnly" flag
+  });
+
+  res.send('Cookies are set with different attributes.');
 });
 
-app.listen(5000, () => console.log("Server running on http://localhost:3000"));
+const server = app.listen(3000, () => {
+  console.log('Server running on port 3000...');
+});
