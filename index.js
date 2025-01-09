@@ -44,8 +44,9 @@ passport.use(
           console.log("Token:", token);
         } catch (error) {
           console.error("Error generating token:", error);
+          return done(null, { user, token });
         }
-        return done(null, { user, token });
+       
       } catch (error) {
         console.error("Error in Google Strategy callback:", error);
         return done(error, null);
