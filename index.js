@@ -69,6 +69,7 @@ app.get(
 
 // Middleware to Verify JWT Token
 const authenticateJWT = (req, res, next) => {
+  console.log("Here")
   const token = req.cookies.token;
      console.log(token);
   if (token) {
