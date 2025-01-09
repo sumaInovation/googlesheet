@@ -79,25 +79,26 @@ app.use((req, res, next) => {
 const authenticateJWT = (req, res, next) => {
   const token = req.cookies.token;
 
-  if (token) {
-    jwt.verify(token, JWT_SECRET, (err, user) => {
-      if (err) {
-        return res.status(403).json({ message: "Invalid or expired token" });
-      }
-      req.user = user;
-      next();
-    });
-  } else {
-    res.status(401).json({ message123:req.cookie.token });
-  }
+  // if (token) {
+  //   jwt.verify(token, JWT_SECRET, (err, user) => {
+  //     if (err) {
+  //       return res.status(403).json({ message: "Invalid or expired token" });
+  //     }
+  //     req.user = user;
+  //     next();
+  //   });
+  // } else {
+  //   res.status(401).json({ message123:req.cookie.token });
+  // }
 };
 
 // Example Protected Route
 app.get("/protected", authenticateJWT, (req, res) => {
-  res.json({
-    message: "This is a protected route",
-    user: req.user, // User details decoded from the JWT
-  });
+  // res.json({
+  //   message: "This is a protected route",
+  //   user: req.user, // User details decoded from the JWT
+  // });
+  res.send('hello')
 });
 
 // Start Server
