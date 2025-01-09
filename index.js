@@ -61,6 +61,7 @@ app.get(
     res.cookie("token", token, {
       httpOnly: true, // Makes the cookie inaccessible to JavaScript
       secure: false, // Set to rue in production with HTTPS
+      sameSite: "lax",
     });
 
     res.redirect("https://pptinovation.vercel.app/singup?name=sumanga"); // Redirect to your React client
