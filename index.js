@@ -77,19 +77,22 @@ app.use((req, res, next) => {
 
 // Middleware to Verify JWT Token
 const authenticateJWT = (req, res, next) => {
-  const token = req.cookies.token123;
-  console.log(token)
-  if (token) {
-    jwt.verify(token, JWT_SECRET, (err, user) => {
-      if (err) {
-        return res.status(403).json({ message: "Invalid or expired token" });
-      }
-      req.user = user;
-      next();
-    });
-  } else {
-    res.status(401).json({ message123:req.cookie.token });
+  console.log("Cookies received: ", req.cookies);
+
+  const token = req.cookies.token;
+  if (!token) {
+    return res.status(401).json({ message: "Unauthorized: No token provided" });
   }
+
+  jwt.verify(token, JWT_SECRET, (err, user) => {
+    if (err) {
+      console.error("JWT verification error: ", err);
+      return res.status(403).json({ message: "Invalid or expired token" });
+    }
+
+    req.user = user; // Attach the decoded user object to the request
+    next();
+  });
 };
 
 // Example Protected Route
