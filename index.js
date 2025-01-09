@@ -88,7 +88,7 @@ const authenticateJWT = (req, res, next) => {
       next();
     });
   } else {
-    res.status(401).json({ message: "Unauthorized" });
+    res.status(401).json({ message123:req.cookie.token });
   }
 };
 
