@@ -42,9 +42,10 @@ passport.use(
         try {
           const token = jwt.sign(user, JWT_SECRET, { expiresIn: "1h" });
           console.log("Token:", token);
+          return done(null, { user, token });
         } catch (error) {
           console.error("Error generating token:", error);
-          return done(null, { user, token });
+          return done(null, null);
         }
        
       } catch (error) {
