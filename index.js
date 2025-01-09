@@ -64,26 +64,26 @@ app.get(
       
     });
 
-    res.redirect("https://pptinovation.vercel.app/singup?name=sumanga"); // Redirect to your React client
+    res.redirect("https://pptinovation.vercel.app/singup"); // Redirect to your React client
   }
 );
 
-// Middleware to Verify JWT Token
 const authenticateJWT = (req, res, next) => {
-  const token = req.cookies.token;
-
+  const token = req.cookies.token;  // Get token from cookies
   if (token) {
     jwt.verify(token, JWT_SECRET, (err, user) => {
       if (err) {
+        console.error("JWT Verification Error:", err);
         return res.status(403).json({ message: "Invalid or expired token" });
       }
-      req.user = user;
+      req.user = user;  // Attach user info to request
       next();
     });
   } else {
-    res.status(401).json({ message: "Unauthorized" });
+    res.status(401).json({ message: "Unauthorized" });  // No token, Unauthorized
   }
 };
+
 
 // Example Protected Route
 app.get("/protected", authenticateJWT, (req, res) => {
