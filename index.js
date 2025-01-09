@@ -384,38 +384,24 @@
 
 
 const express = require("express");
-const cookieParser = require("cookie-parser");
-
 const app = express();
-const PORT = 5000;
+const cors = require("cors");
 
-// Middleware
-app.use(cookieParser()); // Parse cookies from requests
-app.use(express.json()); // Parse JSON body
-
-// Route: Set a cookie
+app.use(
+  cors({
+    origin: "http://localhost:3000", // Allow frontend origin
+    credentials: true,                 // Allow cookies to be sent
+  })
+);
 app.get("/set-cookie", (req, res) => {
-  res.cookie("myCookie", "cookieValue", {
-    httpOnly: true, // Prevent JavaScript from accessing the cookie
-    secure: false, // Set to true in production (HTTPS only)
-    sameSite: "lax", // Control cross-site behavior
-    maxAge: 24 * 60 * 60 * 1000, // 1 day in milliseconds
+  res.cookie("preferences", "dark_mode", {
+    httpOnly: true,
+    secure: true,//process.env.NODE_ENV === "production",
+    sameSite:'none',// process.env.NODE_ENV === "production" ? "None" : "Lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   });
-
-  res.send("Cookie has been set!");
+  
+  res.json({"message":"hello"});
 });
 
-// Route: Read cookies
-app.get("/get-cookie", (req, res) => {
-  console.log("Cookies received:", req.cookies); // Logs cookies
-  res.send(`Cookies received: ${JSON.stringify(req.cookies)}`);
-});
-
-// Route: Clear a cookie
-app.get("/clear-cookie", (req, res) => {
-  res.clearCookie("myCookie"); // Clears the specified cookie
-  res.send("Cookie has been cleared!");
-});
-
-// Start the server
-app.listen(PORT, () => console.log(`Server is running at http://localhost:${PORT}`));
+app.listen(5000, () => console.log("Server running on http://localhost:3000"));
