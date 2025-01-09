@@ -15,7 +15,7 @@ app.use(cookieParser());
 app.use(cors({ origin: ["http://localhost:3000",url], credentials: true })); // Allow your React client to access the API
 
 // JWT Secret (use a secure key in production)
-const JWT_SECRET = "your_jwt_secret";
+const JWT_SECRET = process.env.PRIVATE_SECRET_KEY;
 
 
 
@@ -39,7 +39,7 @@ passport.use(
         console.log("Authenticated User:", user);
 
         // Generate a JWT token
-        const token = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: "1h" });
+        const token = jwt.sign(user, JWT_SECRET, { expiresIn: "1h" });
 
         return done(null, { user, token });
       } catch (error) {
