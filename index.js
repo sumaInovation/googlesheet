@@ -389,7 +389,7 @@ const cors = require("cors");
 
 app.use(
   cors({
-    origin: "http://localhost:3000", // Allow frontend origin
+    origin: "https://pptinovation.vercel.app/", // Allow frontend origin
     credentials: true,                 // Allow cookies to be sent
   })
 );
