@@ -32,7 +32,7 @@ passport.use(
         name: profile.displayName,
         email: profile.emails[0].value,
       };
-
+       console.log(user);
       // Generate a JWT token
       const token = jwt.sign(user, JWT_SECRET, { expiresIn: "1h" });
 
