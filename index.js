@@ -18,28 +18,39 @@ app.use(cors({ origin: ["http://localhost:3000",url], credentials: true })); // 
 const JWT_SECRET = "your_jwt_secret";
 
 // Passport Google Strategy (Replace with your credentials)
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const jwt = require("jsonwebtoken");
+
 passport.use(
   new GoogleStrategy(
     {
-      clientID:process.env.GOOGLE_CLIENT_ID,
+      clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: "https://googlesheet-yuetcisb.b4a.run/auth/google/callback",
+      scope: ["profile", "email"],
     },
-    (accessToken, refreshToken, profile, done) => {
-      // Here, you'd typically save the user to the database
-      const user = {
-        id: profile.id,
-        name: profile.displayName,
-        email: profile.emails[0].value,
-      };
-       console.log(user);
-      // Generate a JWT token
-      const token = jwt.sign(user, JWT_SECRET, { expiresIn: "1h" });
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        const user = {
+          id: profile.id,
+          name: profile.displayName,
+          email: profile.emails?.[0]?.value || null,
+        };
 
-      return done(null, { user, token });
+        console.log("Authenticated User:", user);
+
+        // Generate a JWT token
+        const token = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: "1h" });
+
+        return done(null, { user, token });
+      } catch (error) {
+        console.error("Error in Google Strategy callback:", error);
+        return done(error, null);
+      }
     }
   )
 );
+
 
 // Initialize Passport
 app.use(passport.initialize());
