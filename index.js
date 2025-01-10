@@ -17,7 +17,7 @@ app.use(cors(corsOptions));
 
 // Session middleware setup
 app.use(session({
-  secret: 'your-secret-key', // Replace with a strong secret key
+  secret: 'your-secret-keys', // Replace with a strong secret key
   resave: true,
   saveUninitialized: true,
   cookie: {
