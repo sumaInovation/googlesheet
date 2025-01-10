@@ -17,18 +17,18 @@ app.use(cors(corsOptions));
 
 // Session middleware setup
 app.use(session({
-  secret: 'your-secret-key', // Replace with a stronger secret key
+  secret: 'your-secret-key', // Replace with a strong secret key
   resave: true,
   saveUninitialized: true,
   cookie: {
-    httpOnly: true,  // For better security
-    secure: process.env.NODE_ENV === 'production',  // Secure cookies only in production
-    maxAge: 1000 * 60 * 60 * 24, // Cookie expiration time (1 day)
+    httpOnly: true, // Prevents client-side scripts from accessing the cookie
+    secure: process.env.NODE_ENV === 'production', // Ensures cookies are sent over HTTPS in production
+    sameSite: 'none', // Allows cookies to be sent in cross-origin requests
+    maxAge: 1000 * 60 * 60 * 24, // Cookie expiration (1 day)
   },
 }));
-
 // Sample route for login to set a session
-app.get('/login', (req, res) => {
+app.post('/login', (req, res) => {
   req.session.user = { id: 1, name: 'John Doe' };
   res.json({ message: 'Logged in successfully' });
 });
