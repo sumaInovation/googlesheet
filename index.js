@@ -383,33 +383,61 @@
 // // app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
 
 
+// server.js or app.js
 const express = require('express');
+const cors = require('cors');
+const session = require('express-session');
 const app = express();
 
-app.get('/', (req, res) => {
-  // "name" and "value"
-  res.cookie('sessionId', '12345678', {
-    // "expires" - The cookie expires in 24 hours
-    expires: new Date(Date.now() + 86400000), 
-    // "path" - The cookie is accessible for APIs under the '/api' route
-    path: '/', 
-    // "domain" - The cookie belongs to the 'example.com' domain
-    domain: 'pptinovation.vercel.app', 
-    // "secure" - The cookie will be sent over HTTPS only
-    secure: true, 
-    // "HttpOnly" - The cookie cannot be accessed by client-side scripts
-    httpOnly: true
-  });
+// CORS Configuration for allowing cross-origin requests from React
+const corsOptions = {
+  origin: ['http://localhost:3000','https://pptinovation.vercel.app'],  // React app origin
+  methods: ['GET', 'POST'],
+  credentials: true,  // Allows cookies to be sent with requests
+};
 
-  // We can also use "maxAge" to specify expiration time in milliseconds
-  res.cookie('preferences', 'dark_theme', {
-    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-    httpOnly: true // For security, also set "httpOnly" flag
-  });
+app.use(cors(corsOptions));
 
-  res.send('Cookies are set with different attributes.');
+// Session middleware setup
+app.use(session({
+  secret: 'your-secret-key', // Replace with a stronger secret key
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    httpOnly: true,  // For better security
+    secure: false,  // Set to true in production with HTTPS
+    maxAge: 1000 * 60 * 60 * 24, // Cookie expiration time (1 day)
+  },
+}));
+
+// Sample route for login to set a session
+app.post('/login', (req, res) => {
+  // Assuming successful login
+  req.session.user = { id: 1, name: 'John Doe' };
+  res.json({ message: 'Logged in successfully' });
 });
 
-const server = app.listen(5000, () => {
-  console.log('Server running on port 3000...');
+// Sample route for checking the session
+app.get('/user', (req, res) => {
+  if (req.session.user) {
+    res.json(req.session.user);
+  } else {
+    res.status(401).json({ message: 'Not authenticated' });
+  }
+});
+
+// Logout route to destroy the session
+app.post('/logout', (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      return res.status(500).json({ message: 'Failed to log out' });
+    }
+    res.json({ message: 'Logged out successfully' });
+  });
+});
+
+// Set the port
+const PORT = 4000;
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
 });
