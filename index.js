@@ -8,7 +8,7 @@ app.set('trust proxy', 1);
 
 // CORS Configuration for allowing cross-origin requests from React
 const corsOptions = {
-  origin: ['http://localhost:3000', 'https://pptinovation.vercel.app'],  // React app origin
+  origin:'*',  // React app origin
   methods: ['GET', 'POST'],
   credentials: true,  // Allows cookies to be sent with requests
 };
