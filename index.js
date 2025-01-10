@@ -55,7 +55,7 @@ app.post('/logout', (req, res) => {
 });
 
 // Set the port
-const PORT = 4000;
+const PORT = 5000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhosts:${PORT}`);
 });
