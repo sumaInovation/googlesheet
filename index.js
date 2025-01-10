@@ -28,7 +28,7 @@ app.use(session({
 }));
 
 // Sample route for login to set a session
-app.post('/login', (req, res) => {
+app.get('/login', (req, res) => {
   req.session.user = { id: 1, name: 'John Doe' };
   res.json({ message: 'Logged in successfully' });
 });
