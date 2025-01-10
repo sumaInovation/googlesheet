@@ -1,59 +1,33 @@
+// server.js
 const express = require('express');
-const cors = require('cors');
-const session = require('express-session');
+const session = require('cookie-session');
+const helmet = require('helmet');
+const hpp = require('hpp');
+const csurf = require('csurf');
+const limiter =require('express-rate-limit')
+/* Create Express App */
 const app = express();
 
-// Trust proxy if behind one (e.g., Vercel)
-app.set('trust proxy', 1);
+/* Set Security Configs */
+app.use(helmet());
+app.use(hpp());
 
-// CORS Configuration for allowing cross-origin requests from React
-const corsOptions = {
-  origin:'*',  // React app origin
-  methods: ['GET', 'POST'],
-  credentials: true,  // Allows cookies to be sent with requests
-};
+/* Set Cookie Settings */
+app.use(
+    session({
+        name: 'session',
+        secret: 'secretKeyWooo',
+        cookie  : {
+          httpOnly: true,
+          secure: true,
+          maxAge  : 60 * 60 * 1000 
+      }
+    })
+);
+app.use(csurf());
 
-app.use(cors(corsOptions));
+app.use(limiter);
 
-// Session middleware setup
-app.use(session({
-  secret: 'your-secret-keys', // Replace with a strong secret key
-  resave: true,
-  saveUninitialized: true,
-  cookie: {
-    httpOnly: true, // Prevents client-side scripts from accessing the cookie
-    secure:true, // Ensures cookies are sent over HTTPS in production
-    sameSite: 'stric', // Allows cookies to be sent in cross-origin requests
-    maxAge: 1000 * 60 * 60 * 24, // Cookie expiration (1 day)
-  },
-}));
-// Sample route for login to set a session
-app.post('/login', (req, res) => {
-  req.session.user = { id: 1, name: 'John Doe' };
-  res.json({ message: 'Logged in successfully' });
-});
-
-// Sample route for checking the session
-app.get('/user', (req, res) => {
-  if (req.session.user) {
-    res.json(req.session.user);
-  } else {
-    res.status(401).json({ message: 'Not authenticated' });
-  }
-});
-
-// Logout route to destroy the session
-app.post('/logout', (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
-      return res.status(500).json({ message: 'Failed to log out' });
-    }
-    res.json({ message: 'Logged out successfully' });
-  });
-});
-
-// Set the port
-const PORT = 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+app.listen(5000, () => {
+    console.log("I'm listening!");
 });
