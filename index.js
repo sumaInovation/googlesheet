@@ -22,8 +22,8 @@ app.use(session({
   saveUninitialized: true,
   cookie: {
     httpOnly: true, // Prevents client-side scripts from accessing the cookie
-    secure: process.env.NODE_ENV === 'production', // Ensures cookies are sent over HTTPS in production
-    sameSite: 'none', // Allows cookies to be sent in cross-origin requests
+    secure:true, // Ensures cookies are sent over HTTPS in production
+    sameSite: 'stric', // Allows cookies to be sent in cross-origin requests
     maxAge: 1000 * 60 * 60 * 24, // Cookie expiration (1 day)
   },
 }));
