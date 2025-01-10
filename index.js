@@ -23,7 +23,7 @@ app.use(session({
   saveUninitialized: true,
   cookie: {
     httpOnly: true,  // For better security
-    secure: false,  // Set to true in production with HTTPS
+    secure: true,  // Set to true in production with HTTPS
     maxAge: 1000 * 60 * 60 * 24, // Cookie expiration time (1 day)
   },
 }));
