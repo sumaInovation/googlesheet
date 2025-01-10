@@ -1,15 +1,14 @@
-
-
-
-// server.js or app.js
 const express = require('express');
 const cors = require('cors');
 const session = require('express-session');
 const app = express();
 
+// Trust proxy if behind one (e.g., Vercel)
+app.set('trust proxy', 1);
+
 // CORS Configuration for allowing cross-origin requests from React
 const corsOptions = {
-  origin: ['http://localhost:3000','https://pptinovation.vercel.app'],  // React app origin
+  origin: ['http://localhost:3000', 'https://pptinovation.vercel.app'],  // React app origin
   methods: ['GET', 'POST'],
   credentials: true,  // Allows cookies to be sent with requests
 };
@@ -23,14 +22,13 @@ app.use(session({
   saveUninitialized: true,
   cookie: {
     httpOnly: true,  // For better security
-    secure: true,  // Set to true in production with HTTPS
+    secure: process.env.NODE_ENV === 'production',  // Secure cookies only in production
     maxAge: 1000 * 60 * 60 * 24, // Cookie expiration time (1 day)
   },
 }));
 
 // Sample route for login to set a session
 app.post('/login', (req, res) => {
-  // Assuming successful login
   req.session.user = { id: 1, name: 'John Doe' };
   res.json({ message: 'Logged in successfully' });
 });
@@ -57,6 +55,5 @@ app.post('/logout', (req, res) => {
 // Set the port
 const PORT = 5000;
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhosts:${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });
-  
