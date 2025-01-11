@@ -8,7 +8,7 @@ const { use } = require('passport');
 const app = express();
 
 app.use(express.json());
-app.use(cookieParser()); // For signed cookies
+app.use(cookieParser('your-secret-key')); // For signed cookies
 
 // Allow CORS
 app.use(
@@ -28,7 +28,7 @@ app.post('/login', (req, res) => {
       httpOnly: true,
       secure: true, // Set to true in production (requires HTTPS)
       sameSite: 'None', // Required for cross-origin cookies
-      signed: false, // For signed cookies
+      signed: true, // For signed cookies
       maxAge: 7*60*60 * 1000, // 7 days
     });
     res.status(200).json({ message: 'Login successfuly' });
@@ -39,7 +39,7 @@ app.post('/login', (req, res) => {
 
 // Session route
 app.get('/session', (req, res) => {
-  const username = req.Cookies.username;
+  const username = req.signedCookies.username;
    console.log(username);
   if (username) {
     res.status(200).json({ username });
