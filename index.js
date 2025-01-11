@@ -24,11 +24,11 @@ app.use(cookieParser());
 
 app.get('/set',function(req, res){
 req.session.user = { name:'Chetan' };
-res.send('Session set');
+res.json({'message':'Session set'});
 });
 
 app.get('/get',function(req, res){
-res.send(req.session.user);
+res.json({'result':req.session.user});
 });
 
 http.createServer(app).listen(5000, function(){
