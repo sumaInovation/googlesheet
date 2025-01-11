@@ -1,41 +1,36 @@
-// server.js
 const express = require('express');
-const session = require('cookie-session');
-const helmet = require('helmet');
-const hpp = require('hpp');
-const csurf = require('csurf');
-const limiter =require('express-rate-limit')
+const cookieParser = require("cookie-parser");
+const sessions = require('express-session');
+const http = require('http');
 const cors=require('cors');
-/* Create Express App */
 const app = express();
+const PORT = 4000;
 
-/* Set Security Configs */
-app.use(helmet());
-app.use(hpp());
+// creating 24 hours from milliseconds
+const oneDay = 1000 * 60 * 60 * 24;
 app.use(cors({
-  origin:['http://localhost:3000','https://pptinovation.vercel.app'],
+  origin:'*',
   credentials:true
 }))
-/* Set Cookie Settings */
-app.use(
-    session({
-        name: 'session',
-        secret: 'secretKeyWooo',
-        cookie  : {
-          httpOnly: true,
-          secure: true,
-          maxAge  : 60 * 60 * 1000 
-      }
-    })
-);
-app.use(csurf());
+//session middleware
+app.use(sessions({
+secret: "thisismysecrctekey",
+saveUninitialized:true,
+cookie: { maxAge: oneDay },
+resave: false
+}));
 
-app.use(limiter);
-app.use('/api/csrf-token',(req,res)=>{
-     req.session.session='sumanga';
-     res.json({"message":"sent cookies"})
-})
+app.use(cookieParser());
 
-app.listen(5000, () => {
-    console.log("I'm listening!");
+app.get('/set',function(req, res){
+req.session.user = { name:'Chetan' };
+res.send('Session set');
+});
+
+app.get('/get',function(req, res){
+res.send(req.session.user);
+});
+
+http.createServer(app).listen(3000, function(){
+console.log('Express server listening on port 3000');
 });
