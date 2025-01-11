@@ -28,7 +28,7 @@ app.post('/login', (req, res) => {
       httpOnly: true,
       secure: true, // Set to true in production (requires HTTPS)
       sameSite: 'None', // Required for cross-origin cookies
-      signed: true, // For signed cookies
+      signed: false, // For signed cookies
       maxAge: 7*60*60 * 1000, // 7 days
     });
     res.status(200).json({ message: 'Login successfuly' });
