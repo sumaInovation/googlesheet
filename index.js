@@ -193,7 +193,9 @@ app.post('/login', (req, res) => {
 // Session route
 app.get('/session', (req, res) => {
   const username = req.session.username;
+  console.log(username)
   if (username) {
+
     res.status(200).json({ username });
   } else {
     res.status(401).json({ message: 'No active session' });
