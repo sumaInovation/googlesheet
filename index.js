@@ -181,16 +181,15 @@ app.use(
 // Login route
 app.post('/login', (req, res) => {
   const { username } = req.body;
+  console.log("Session data before setting:", req.session);
   if (username) {
-    // Store the username in the session
-    console.log(username)
     req.session.username = username;
+    console.log("Session data after setting:", req.session); // Log session to verify
     res.status(200).json({ message: 'Login successful' });
   } else {
     res.status(400).json({ message: 'Invalid username' });
   }
 });
-
 // Session route
 app.get('/session', (req, res) => {
   const username = req.session.username;
