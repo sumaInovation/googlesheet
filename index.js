@@ -1,36 +1,66 @@
 const express = require('express');
-const cookieParser = require("cookie-parser");
-const sessions = require('express-session');
-const http = require('http');
-const cors=require('cors');
+const session = require('express-session');
+const cors = require('cors');
+
 const app = express();
-const PORT = 4000;
 
-// creating 24 hours from milliseconds
-const oneDay = 1000 * 60 * 60 * 24;
-app.use(cors({
-  origin:'*',
-  credentials:true
-}))
-//session middleware
-app.use(sessions({
-secret: "thisismysecrctekey",
-saveUninitialized:true,
-cookie: { maxAge: oneDay },
-resave: false
-}));
+// Enable CORS for your React app
+app.use(
+  cors({
+    origin: 'https://pptinovation.vercel.app', // Frontend URL
+    credentials: true, // Allow cookies
+  })
+);
 
-app.use(cookieParser());
+// Session configuration
+app.use(
+  session({
+    secret: 'your-secret-key', // Change this to a secure key
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true, // Prevents client-side JavaScript from accessing the cookie
+      secure: false, // Set true if using HTTPS
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+    },
+  })
+);
 
-app.get('/set',function(req, res){
-req.session.user = { name:'Chetan' };
-res.json({'message':'Session set'});
+app.use(express.json());
+
+// User login endpoint
+app.post('/login', (req, res) => {
+  const { username } = req.body;
+
+  if (username) {
+    req.session.username = username; // Store username in session
+    res.status(200).json({ message: 'Login successful', username });
+  } else {
+    res.status(400).json({ message: 'Invalid username' });
+  }
 });
 
-app.get('/get',function(req, res){
-res.json({'result':req.session.user});
+// Check session endpoint
+app.get('/session', (req, res) => {
+  if (req.session.username) {
+    res.status(200).json({ username: req.session.username });
+  } else {
+    res.status(401).json({ message: 'No active session' });
+  }
 });
 
-http.createServer(app).listen(5000, function(){
-console.log('Express server listening on port 5000');
+// User logout endpoint
+app.post('/logout', (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      return res.status(500).json({ message: 'Logout failed' });
+    }
+    res.clearCookie('connect.sid'); // Clear the session cookie
+    res.status(200).json({ message: 'Logout successful' });
+  });
+});
+
+const PORT = 5000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
