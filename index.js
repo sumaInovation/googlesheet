@@ -183,6 +183,7 @@ app.post('/login', (req, res) => {
   const { username } = req.body;
   if (username) {
     // Store the username in the session
+    console.log(username)
     req.session.username = username;
     res.status(200).json({ message: 'Login successful' });
   } else {
