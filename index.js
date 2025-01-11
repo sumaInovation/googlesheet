@@ -8,7 +8,7 @@ const { use } = require('passport');
 const app = express();
 
 app.use(express.json());
-app.use(cookieParser('your-secret-key')); // For signed cookies
+app.use(cookieParser()); // For signed cookies
 
 // Allow CORS
 app.use(
@@ -39,7 +39,7 @@ app.post('/login', (req, res) => {
 
 // Session route
 app.get('/session', (req, res) => {
-  const username = req.signedCookies.username;
+  const username = req.Cookies.username;
    console.log(username);
   if (username) {
     res.status(200).json({ username });
