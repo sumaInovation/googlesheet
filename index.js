@@ -27,7 +27,7 @@ app.post('/login', (req, res) => {
     res.cookie('username', username, {
       httpOnly: true,
       secure: false, // Set to true in production (requires HTTPS)
-      sameSite: 'None', // Required for cross-origin cookies
+      sameSite: 'Strick', // Required for cross-origin cookies
       signed: true, // For signed cookies
       maxAge: 7*60*60 * 1000, // 7 days
     });
