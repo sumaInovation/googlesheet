@@ -69,6 +69,7 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
+const { use } = require('passport');
 
 const app = express();
 
@@ -86,7 +87,7 @@ app.use(
 // Login route
 app.post('/login', (req, res) => {
   const { username } = req.body;
-
+   console.log(username);
   if (username) {
     // Set a secure cookie
     res.cookie('username', username, {
@@ -105,7 +106,7 @@ app.post('/login', (req, res) => {
 // Session route
 app.get('/session', (req, res) => {
   const username = req.signedCookies.username;
-
+   console.log(username);
   if (username) {
     res.status(200).json({ username });
   } else {
