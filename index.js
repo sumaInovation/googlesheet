@@ -1,64 +1,30 @@
-
-
 const express = require('express');
-const cookieParser = require('cookie-parser');
 const cors = require('cors');
+const bodyParser = require('body-parser');
+const cookieParser=require('cookie-parser');
+const { OAuth2Client } = require('google-auth-library');
+const mongoose = require('mongoose');
+require('dotenv').config();
+const app=express();
+
+const router=require('./Routes/User-Route.js')
+
+const PORT=process.env.PORT|| 5001;
+app.use(cookieParser())
+app.use(cors({
+  origin:['http://localhost:3000','https://pptinovation.vercel.app'],
+  credentials:true
+}))
+app.use(express.json())
+app.use('/api',router);
 
 
-const app = express();
+ mongoose.connect(process.env.MONGODB_URL)
+ .then()
 
-app.use(express.json());
-app.use(cookieParser('your-secret-key')); // For signed cookies
+    app.listen(PORT,()=>console.log(`Server is running on Port: ${PORT} && Connected MONGODB`));
 
-// Allow CORS
-app.use(
-  cors({
-    origin: 'https://pptinovation.vercel.app', // Replace with your frontend domain
-    credentials: true, // Allow cookies to be sent in cross-origin requests
-  })
-);
 
-// Login route
-app.post('/login', (req, res) => {
-  const { username } = req.body;
-   console.log(username);
-  if (username) {
-    // Set a secure cookie
-    res.cookie('username', username, {
-      httpOnly: true,
-      secure: true, // Set to true in production (requires HTTPS)
-      sameSite: 'None', // Required for cross-origin cookies
-      signed: true, // For signed cookies
-      maxAge: 7*60*60 * 1000, // 7 days
-    });
-    res.status(200).json({ message: 'Login successfuly' });
-  } else {
-    res.status(400).json({ message: 'Invalid username' });
-  }
-});
 
-// Session route
-app.get('/session', (req, res) => {
-  const username = req.signedCookies.username;
-   console.log(username);
-  if (username) {
-    res.status(200).json({ username });
-  } else {
-    res.status(401).json({ message: 'No active session' });
-  }
-});
 
-// Logout route
-app.post('/logout', (req, res) => {
-  res.clearCookie('username', {
-    httpOnly: true,
-    secure: true,
-    sameSite: 'None',
-  });
-  res.status(200).json({ message: 'Logout successful' });
-});
 
-const PORT = 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
