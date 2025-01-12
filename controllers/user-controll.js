@@ -71,7 +71,7 @@ const login = async (req, res, next) => {
           //  res.cookie(String(payload.userId), newtoken, {
             res.cookie("User", newtoken, {
                 httpOnly: true,    // Prevents client-side scripts from accessing the cookie
-                secure: false, 
+                secure: true, 
                 sameSite:'lax',     // Ensures the cookie is sent over HTTPS only
                   maxAge: 1000 * 60*60, // Sets the cookie to expire in 60 seconds
               });
