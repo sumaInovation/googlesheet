@@ -92,7 +92,7 @@ const tokenverify = async (req, res, next) => {
 
     
 const token=req.headers.cookie.split("=")[2]
-console.log(token)
+console.log(req.headers.cookie)
     // const headers = req.headers['authorization'];
     // const token=headers.split(' ')[1];
         
