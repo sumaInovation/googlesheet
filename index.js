@@ -1,30 +1,19 @@
 const express = require('express');
-const cors = require('cors');
-const bodyParser = require('body-parser');
-const cookieParser=require('cookie-parser');
-const { OAuth2Client } = require('google-auth-library');
-const mongoose = require('mongoose');
-require('dotenv').config();
-const app=express();
+const app = express();
+const cookiesparser=require('cookie-parser');
 
-const router=require('./Routes/User-Route.js')
+const connectDB = require('./db/connectDB')
+const authRoutes = require('./Routes/auth.route');
+const Verfifytoken=require('./middleware/Verifytoken');
 
-const PORT=process.env.PORT|| 5001;
-app.use(cookieParser())
-app.use(cors({
-  origin:['http://localhost:3000','https://pptinovation.vercel.app'],
-  credentials:true
-}))
-app.use(express.json())
-app.use('/api',router);
+const PORT = 5000;
+//use middleware
+app.use(express.json())//allows to allowing req.body
+app.use(cookiesparser())//allows pasre cookies
 
+app.use('/api/auth', authRoutes);
 
- mongoose.connect(process.env.MONGODB_URL)
- .then()
-
-    app.listen(PORT,()=>console.log(`Server is running on Port: ${PORT} && Connected MONGODB`));
-
-
-
-
-
+app.listen(PORT, () => {
+    connectDB();
+    console.log(`Server Running on port:${PORT}`)
+});   
